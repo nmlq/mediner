@@ -14,9 +14,9 @@ setuptools.setup(
     author_email="noreply@va.gov",
     maintainer="Nathan McCoy",
     maintainer_email="noreply@va.gov",
-    python_requires='>=3.6',
+    python_requires='>=3.10',
     install_requires=read_requirements('requirements.txt'),
-    packages=setuptools.find_packages('mediner'),
+    packages=setuptools.find_packages(),
     entry_points={
         "console_scripts": ['mediner=mediner.cli:main'],
     },
