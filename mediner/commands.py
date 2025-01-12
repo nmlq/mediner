@@ -2,6 +2,8 @@ import logging
 import pandas
 import json
 
+from mediner import transformations
+
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +35,10 @@ def convert_csv_to_label_studio(input_filename: str, text_column: str, output_fi
 		{
 			"data": {
 				"text": row[text_column]
+			},
+			"meta_info":
+			{
+				"md5": transformations.text_to_md5(row[text_column])
 			}
 		}
 		for _, row in df.fillna('').iterrows()
