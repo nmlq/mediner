@@ -17,6 +17,7 @@ def mock_input_data() -> list[dict]:
         }
     ]
 
+
 @pytest.fixture(scope="session")
 def mock_input_df(mock_input_data) -> pandas.DataFrame:
     return pandas.DataFrame(mock_input_data)
@@ -24,6 +25,8 @@ def mock_input_df(mock_input_data) -> pandas.DataFrame:
 
 @pytest.fixture(scope="session")
 def mock_input_csv(mock_input_df, tmp_path_factory):
-    mock_input_csv_path = tmp_path_factory.mktemp("mock-data-mediner") / "mock-input.csv"
+    mock_input_csv_path = tmp_path_factory.mktemp(
+        "mock-data-mediner"
+    ) / "mock-input.csv"
     mock_input_df.to_csv(mock_input_csv_path, index=False)
     return str(mock_input_csv_path)

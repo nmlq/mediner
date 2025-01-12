@@ -1,15 +1,17 @@
 
 import setuptools
 
+
 def read_requirements(filename: str):
     with open(filename) as f:
         return [line.strip() for line in f]
 
+
 setuptools.setup(
     name="mediner",
     version='0.0.0',
-    description="Medical Named Entity Regonition for the VA Hospital",
-    long_description="Named Entity Recognition specifically designed for medical texts used in the VA Hospital",
+    description="Medical NER",
+    long_description="Named Entity Recognition for the VA Hospital",
     author="Nathan McCoy",
     author_email="noreply@va.gov",
     maintainer="Nathan McCoy",
@@ -34,5 +36,4 @@ setuptools.setup(
         'Topic :: Text Processing :: Linguistic',
         'Topic :: Utilities',
     ],
-
 )
