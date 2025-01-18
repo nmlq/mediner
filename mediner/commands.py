@@ -58,3 +58,15 @@ def convert_csv_to_label_studio(
             json.dump(templates, jf, indent=2)
 
     return templates
+
+def train(
+        input_filenames: list[str],
+        output_filename: str = None) -> str:
+    """Train a NER from the source annotation filenames
+    
+    :returns str: path of trained model binary
+    """
+    logger.info(f"Training from {len(input_filenames)} filenames")
+    annotations = transformations.files_to_annotations(input_filenames)
+    docbin = transformations.annotations_to_docbin(annotations)
+    pass

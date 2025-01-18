@@ -14,6 +14,8 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('--convert-csv-to-label-studio')
     parser.add_argument('--text-column')
     parser.add_argument('--output-json')
+    parser.add_argument('--train', action='store_true')
+    parser.add_argument('--exported-jsons', nargs='+')
     parser.add_argument('--debug', action='store_true')
     return parser
 
@@ -35,4 +37,9 @@ def main() -> None:
             args.convert_csv_to_label_studio,
             args.text_column,
             args.output_json
+        )
+    if args.train and args.exported_jsons:
+        commands.train(
+            args.exported_jsons,
+            output_filename=None
         )
