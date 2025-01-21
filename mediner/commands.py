@@ -71,13 +71,17 @@ def train(
         dev_spacy_filename: str = 'dev.spacy',
         config_filename: str = 'config.cfg') -> str:
     """Train a NER from the source annotation filenames
-    
+
     :returns str: path of trained model binary
     """
     logger.info(f"Training from {len(input_filenames)} filenames")
     annotations = transformations.files_to_annotations(input_filenames)
-    dev_annotations, train_annotations = transformations.split_dev_train(annotations)
-    logger.info(f"Split annotations, dev {len(dev_annotations)}, train {len(train_annotations)}")
+    dev_annotations, train_annotations = transformations.split_dev_train(
+        annotations
+    )
+    logger.info(
+        f"Split; dev {len(dev_annotations)}, train {len(train_annotations)}"
+    )
     dev_docbin = transformations.annotations_to_docbin(dev_annotations)
     train_docbin = transformations.annotations_to_docbin(train_annotations)
     dev_docbin.to_disk('dev.spacy')
@@ -101,12 +105,12 @@ def train(
         'nlp': nlp.to_bytes()
     }
     now = datetime.datetime.now()
+    suffix = f"{now.year}-{now.month}-{now.day}-{now.timestamp()}"
     if output_filename is None:
-        output_filename = f"mediner-model-{now.year}-{now.month}-{now.day}-{now.timestamp()}.pkl"
+        output_filename = f"mediner-model-{suffix}.pkl"
     logger.info(f"Saving model; {output_filename}")
     with open(output_filename, 'wb') as f:
         pickle.dump(serialized_model, f)
-    
     return output_filename
 
 

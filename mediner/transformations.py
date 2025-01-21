@@ -36,10 +36,16 @@ def files_to_annotations(filenames: list[str]) -> list[dict]:
                 dictionary[md5] = annotation
             else:
                 logger.info(f"Duplicate annotation; {md5}")
-                current = datetime.datetime.fromisoformat(annotation['updated_at'])
-                previous = datetime.datetime.fromisoformat(dictionary[md5]['updated_at'])
+                current = datetime.datetime.fromisoformat(
+                    annotation['updated_at']
+                )
+                previous = datetime.datetime.fromisoformat(
+                    dictionary[md5]['updated_at']
+                )
                 if current > previous:
-                    logger.info(f"Replacing older annotation with newer annotation; {md5}")
+                    logger.info(
+                        f"Replacing older with newer annotation; {md5}"
+                    )
                     dictionary[md5] = annotation
     return list(dictionary.values())
 
@@ -69,7 +75,9 @@ def merge_overlaps(
     prev_entity_span = entity_spans[0]
     merged_annotations = [annotations[0]]
 
-    for curr_entity_span, (start, end, label) in zip(entity_spans[1:], annotations[1:]):
+    for curr_entity_span, (start, end, label) in zip(
+            entity_spans[1:],
+            annotations[1:]):
         # overlaps
         if curr_entity_span.start <= prev_entity_span.end:
             # fix the last annotations `end` char
@@ -86,6 +94,7 @@ def merge_overlaps(
 
     return merged_annotations
 
+
 def annotations_to_docbin(annotations: list[dict]) -> DocBin:
     """Convert the label studio annotations to the spacy format.
 
@@ -100,7 +109,11 @@ def annotations_to_docbin(annotations: list[dict]) -> DocBin:
         doc = nlp(text)
         # Annotations are lists of [start, end, label]
         span_labels = [
-            [ res['value']['start'], res['value']['end'], res['value']['labels'][0] ]
+            [
+                res['value']['start'],
+                res['value']['end'],
+                res['value']['labels'][0]
+            ]
             for ann in annotation['annotations']
             for res in ann['result']
         ]
@@ -118,7 +131,7 @@ def annotations_to_docbin(annotations: list[dict]) -> DocBin:
         for ent in merged_spans:
             if ent.text != ent.text.strip():
                 skipped += 1
-                logger.debug("Entity found with whitespace, skipping; '{}'".format(json.dumps(ent.text)))
+                logger.debug(f"Entity with whitespace, skipping; '{ent.text}'")
                 continue
 
             ents.append(ent)
@@ -127,7 +140,7 @@ def annotations_to_docbin(annotations: list[dict]) -> DocBin:
 
         docbin.add(doc)
     logger.info(f"Skipped {skipped} entities with whitespace")
-    logger.info(f"Gathered {total} entities from {len(annotations)} annotations inputs")
+    logger.info(f"Gathered {total} entities from {len(annotations)} inputs")
     return docbin
 
 
@@ -139,5 +152,5 @@ def split_dev_train(
     :return tuple: (dev, train) split
     """
     index = int(len(annotations) * amount)
-    dev_annotations, train_annotations = annotations[:index], annotations[index:]
-    return dev_annotations, train_annotations
+    dev, train = annotations[:index], annotations[index:]
+    return dev, train
