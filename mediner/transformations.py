@@ -129,5 +129,15 @@ def annotations_to_docbin(annotations: list[dict]) -> DocBin:
     logger.info(f"Skipped {skipped} entities with whitespace")
     logger.info(f"Gathered {total} entities from {len(annotations)} annotations inputs")
     return docbin
-            
 
+
+def split_dev_train(
+        annotations: list,
+        amount: float = 0.2) -> tuple:
+    """Split the annotations into a dev/train tuple.
+
+    :return tuple: (dev, train) split
+    """
+    index = int(len(annotations) * amount)
+    dev_annotations, train_annotations = annotations[:index], annotations[index:]
+    return dev_annotations, train_annotations

@@ -16,6 +16,7 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('--output-json')
     parser.add_argument('--train', action='store_true')
     parser.add_argument('--exported-jsons', nargs='+')
+    parser.add_argument('--load')
     parser.add_argument('--debug', action='store_true')
     return parser
 
@@ -43,3 +44,5 @@ def main() -> None:
             args.exported_jsons,
             output_filename=None
         )
+    if args.load:
+        commands.load(args.load)
