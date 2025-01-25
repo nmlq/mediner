@@ -10,3 +10,6 @@ __pycache__
 *.csv
 *.spacy
 *.pkl
+
+# folders
+mediner_model/

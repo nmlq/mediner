@@ -59,12 +59,14 @@ def convert_csv_to_label_studio(
     ]
 
     if predict and model_filename:
-        logger.info(f"Predictions enabled, predicting on all inputs {len(templates)}")
+        logger.info(
+            f"Predictions enabled, predicting on all inputs {len(templates)}"
+        )
         nlp = load(model_filename)
         total_ents = 0
         for template in tqdm.tqdm(templates):
             doc = nlp(template['data']['text'])
-            template_results_type = 'predictions' #not 'annotations'
+            template_results_type = 'predictions'  # not 'annotations'
             template[template_results_type] = [{
                 "model_version": model_filename,
                 "score": 1.0,
@@ -86,7 +88,9 @@ def convert_csv_to_label_studio(
                 ]
             }]
             total_ents += len(template[template_results_type][0]['result'])
-        logger.info(f"Added a total of {total_ents} entities to {len(templates)} inputs")
+        logger.info(
+            f"Added total {total_ents} entities to {len(templates)} inputs"
+        )
 
     logger.info(f"Exported {len(templates)} templates for label studio")
 
