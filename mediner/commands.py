@@ -4,6 +4,7 @@ import json
 import spacy
 import pickle
 import datetime
+import tqdm
 
 from mediner import transformations
 
@@ -14,7 +15,9 @@ logger = logging.getLogger(__name__)
 def convert_csv_to_label_studio(
         input_filename: str,
         text_column: str,
-        output_filename: str = None) -> list:
+        output_filename: str = None,
+        predict: bool = False,
+        model_filename: str = None) -> list:
     """Convert a CSV file to a label studio format.
 
     Output file should be .json format for importing into label studio
@@ -36,7 +39,9 @@ def convert_csv_to_label_studio(
         raise ValueError("Text column cannot be empty")
 
     df = pandas.read_csv(input_filename)
+    df = df[:1000]
 
+    logger.info(f"Converting {len(df)} rows to label studio format")
     logger.debug(df)
 
     templates = [
@@ -44,7 +49,7 @@ def convert_csv_to_label_studio(
             "data": {
                 "text": row[text_column]
             },
-            "meta_info":
+            "meta":
             {
                 "md5": transformations.text_to_md5(row[text_column])
             }
@@ -52,6 +57,36 @@ def convert_csv_to_label_studio(
         for _, row in df.fillna('').iterrows()
         if row[text_column]
     ]
+
+    if predict and model_filename:
+        logger.info(f"Predictions enabled, predicting on all inputs {len(templates)}")
+        nlp = load(model_filename)
+        total_ents = 0
+        for template in tqdm.tqdm(templates):
+            doc = nlp(template['data']['text'])
+            template_results_type = 'predictions' #not 'annotations'
+            template[template_results_type] = [{
+                "model_version": model_filename,
+                "score": 1.0,
+                "result": [
+                    {
+                        "id": ent.text,
+                        "from_name": "label",
+                        "to_name": "text",
+                        "type": "labels",
+                        "value": {
+                            "start": ent.start_char,
+                            "end": ent.end_char,
+                            "score": 1.0,
+                            "text": ent.text,
+                            "labels": [ent.label_]
+                        }
+                    }
+                    for ent in doc.ents
+                ]
+            }]
+            total_ents += len(template[template_results_type][0]['result'])
+        logger.info(f"Added a total of {total_ents} entities to {len(templates)} inputs")
 
     logger.info(f"Exported {len(templates)} templates for label studio")
 

@@ -2,3 +2,4 @@ pandas
 pytest
 flake8
 spacy
+tqdm
