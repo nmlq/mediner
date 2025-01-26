@@ -5,6 +5,7 @@ import spacy
 import pickle
 import datetime
 import tqdm
+import os
 
 from mediner import transformations
 from mediner import types
@@ -111,11 +112,15 @@ def train(
         output_path: str = 'mediner_model',
         train_spacy_filename: str = 'train.spacy',
         dev_spacy_filename: str = 'dev.spacy',
-        config_filename: str = 'config.cfg') -> str:
+        config_filename: str = None) -> str:
     """Train a NER from the source annotation filenames
 
     :returns str: path of trained model binary
     """
+    if not config_filename:
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        config_filename = f"{dirname}/config.cfg"
+
     logger.info(f"Training from {len(input_filenames)} filenames")
     annotations = transformations.files_to_annotations(input_filenames)
     dev_annotations, train_annotations = transformations.split_dev_train(
@@ -126,8 +131,8 @@ def train(
     )
     dev_docbin = transformations.annotations_to_docbin(dev_annotations)
     train_docbin = transformations.annotations_to_docbin(train_annotations)
-    dev_docbin.to_disk('dev.spacy')
-    train_docbin.to_disk('train.spacy')
+    dev_docbin.to_disk(dev_spacy_filename)
+    train_docbin.to_disk(train_spacy_filename)
     model_choice = 'model-best'
     spacy.cli.train.train(
         config_filename,
