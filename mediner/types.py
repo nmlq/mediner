@@ -12,6 +12,7 @@ class Data:
     def from_dict(cls, dictionary):
         return cls(**dictionary)
 
+
 @dataclass
 class Meta:
     md5: str
@@ -22,6 +23,7 @@ class Meta:
     @classmethod
     def from_dict(cls, dictionary):
         return cls(**dictionary)
+
 
 @dataclass
 class SpanValue:
@@ -37,6 +39,7 @@ class SpanValue:
     @classmethod
     def from_dict(cls, dictionary):
         return cls(**dictionary)
+
 
 @dataclass
 class EntityResult:
@@ -62,6 +65,7 @@ class EntityResult:
             type=dictionary['type'],
         )
 
+
 @dataclass
 class Prediction:
     model_version: str
@@ -70,7 +74,7 @@ class Prediction:
 
     def to_dict(self):
         return asdict(self)
-    
+
     @classmethod
     def from_dict(cls, dictionary):
         return cls(
@@ -81,6 +85,7 @@ class Prediction:
                 for entity_result in dictionary['result']
             ]
         )
+
 
 @dataclass
 class Task:

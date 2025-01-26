@@ -21,6 +21,18 @@ def test_convert_csv_to_label_studio_with_file_output(
     assert os.path.isfile(str(temp_output_path))
 
 
-def test_train():
+def test_train(tmp_path, mock_label_studio_export_json):
     """Test the train function
     """
+    temp_output_model_path = tmp_path / "temp.output.model.pkl"
+    temp_output_path = str(tmp_path)
+    temp_output_filename = str(temp_output_model_path)
+    assert not os.path.isfile(temp_output_filename)
+    trained_model_output_filename = commands.train(
+        input_filenames=[mock_label_studio_export_json],
+        output_filename=temp_output_filename,
+        output_path=temp_output_path,
+        config_filename="tests/tests_config.cfg"
+    )
+    assert os.path.isfile(trained_model_output_filename)
+    assert trained_model_output_filename == temp_output_filename

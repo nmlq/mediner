@@ -46,11 +46,11 @@ def convert_csv_to_label_studio(
 
     tasks = [
         types.Task(
-            data = types.Data(
-                text = row[text_column]
+            data=types.Data(
+                text=row[text_column]
             ),
-            meta = types.Meta(
-                md5 = transformations.text_to_md5(row[text_column])
+            meta=types.Meta(
+                md5=transformations.text_to_md5(row[text_column])
             )
         )
         for _, row in df.fillna('').iterrows()
@@ -68,18 +68,18 @@ def convert_csv_to_label_studio(
             total_ents += len(doc.ents)
             task.predictions = [
                 types.Prediction(
-                    model_version = model_filename,
-                    score = 1.0,
-                    result = [
+                    model_version=model_filename,
+                    score=1.0,
+                    result=[
                         types.EntityResult(
-                            id = ent.name,
-                            value = [
+                            id=ent.name,
+                            value=[
                                 types.SpanValue(
-                                    start = ent.start_char,
-                                    end = ent.end_char,
-                                    score = 1.0,
-                                    text = ent.text,
-                                    labels = [ent.label_]
+                                    start=ent.start_char,
+                                    end=ent.end_char,
+                                    score=1.0,
+                                    text=ent.text,
+                                    labels=[ent.label_]
                                 )
                             ]
                         )
@@ -128,7 +128,6 @@ def train(
     train_docbin = transformations.annotations_to_docbin(train_annotations)
     dev_docbin.to_disk('dev.spacy')
     train_docbin.to_disk('train.spacy')
-    output_path = 'mediner_model'
     model_choice = 'model-best'
     spacy.cli.train.train(
         config_filename,

@@ -8,26 +8,26 @@ def test_task_to_from_dictionary():
     :raises AssertionError:
     """
     task = types.Task(
-        data = types.Data(
-            text = "Some input textls"
+        data=types.Data(
+            text="Some input textls"
         ),
-        meta = types.Meta(
-            md5 = "deadbeef"
+        meta=types.Meta(
+            md5="deadbeef"
         ),
-        predictions = [
+        predictions=[
             types.Prediction(
-                model_version = "1",
-                score = 1.0,
-                result = [
+                model_version="1",
+                score=1.0,
+                result=[
                     types.EntityResult(
-                        id = "ab1",
-                        value = [
+                        id="ab1",
+                        value=[
                             types.SpanValue(
-                                start = 5,
-                                end = 7,
-                                score = 1.0,
-                                text = "inp",
-                                labels = ["LABEL_NAME"]
+                                start=5,
+                                end=7,
+                                score=1.0,
+                                text="inp",
+                                labels=["LABEL_NAME"]
                             )
                         ]
                     )
