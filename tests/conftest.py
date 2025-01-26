@@ -1,6 +1,5 @@
 import pytest
 import pandas
-import json
 import os
 
 
