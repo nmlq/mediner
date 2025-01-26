@@ -7,6 +7,7 @@ import datetime
 import tqdm
 
 from mediner import transformations
+from mediner import types
 
 
 logger = logging.getLogger(__name__)
@@ -17,7 +18,7 @@ def convert_csv_to_label_studio(
         text_column: str,
         output_filename: str = None,
         predict: bool = False,
-        model_filename: str = None) -> list:
+        model_filename: str = None) -> list[types.Task]:
     """Convert a CSV file to a label studio format.
 
     Output file should be .json format for importing into label studio
@@ -27,7 +28,7 @@ def convert_csv_to_label_studio(
     :param str input_filename:
     :param str text_column:
     :param str output_filename:
-    :return list:
+    :return list: list of Task
     """
     if not input_filename.lower().endswith('.csv'):
         raise ValueError("Input Filename must be a CSV file")
@@ -39,67 +40,69 @@ def convert_csv_to_label_studio(
         raise ValueError("Text column cannot be empty")
 
     df = pandas.read_csv(input_filename)
-    df = df[:1000]
 
     logger.info(f"Converting {len(df)} rows to label studio format")
     logger.debug(df)
 
-    templates = [
-        {
-            "data": {
-                "text": row[text_column]
-            },
-            "meta":
-            {
-                "md5": transformations.text_to_md5(row[text_column])
-            }
-        }
+    tasks = [
+        types.Task(
+            data = types.Data(
+                text = row[text_column]
+            ),
+            meta = types.Meta(
+                md5 = transformations.text_to_md5(row[text_column])
+            )
+        )
         for _, row in df.fillna('').iterrows()
         if row[text_column]
     ]
 
     if predict and model_filename:
         logger.info(
-            f"Predictions enabled, predicting on all inputs {len(templates)}"
+            f"Predictions enabled, predicting on all inputs {len(tasks)}"
         )
         nlp = load(model_filename)
         total_ents = 0
-        for template in tqdm.tqdm(templates):
-            doc = nlp(template['data']['text'])
-            template_results_type = 'predictions'  # not 'annotations'
-            template[template_results_type] = [{
-                "model_version": model_filename,
-                "score": 1.0,
-                "result": [
-                    {
-                        "id": ent.text,
-                        "from_name": "label",
-                        "to_name": "text",
-                        "type": "labels",
-                        "value": {
-                            "start": ent.start_char,
-                            "end": ent.end_char,
-                            "score": 1.0,
-                            "text": ent.text,
-                            "labels": [ent.label_]
-                        }
-                    }
-                    for ent in doc.ents
-                ]
-            }]
-            total_ents += len(template[template_results_type][0]['result'])
+        for task in tqdm.tqdm(tasks):
+            doc = nlp(task.data.text)
+            total_ents += len(doc.ents)
+            task.predictions = [
+                types.Prediction(
+                    model_version = model_filename,
+                    score = 1.0,
+                    result = [
+                        types.EntityResult(
+                            id = ent.name,
+                            value = [
+                                types.SpanValue(
+                                    start = ent.start_char,
+                                    end = ent.end_char,
+                                    score = 1.0,
+                                    text = ent.text,
+                                    labels = [ent.label_]
+                                )
+                            ]
+                        )
+                    ]
+                )
+                for ent in doc.ents
+            ]
         logger.info(
-            f"Added total {total_ents} entities to {len(templates)} inputs"
+            f"Added total {total_ents} entities to {len(tasks)} tasks"
         )
 
-    logger.info(f"Exported {len(templates)} templates for label studio")
+    logger.info(f"Created {len(tasks)} tasks for label studio")
 
     if output_filename:
         logger.info(f"Writing to file {output_filename}")
         with open(output_filename, 'w') as jf:
-            json.dump(templates, jf, indent=2)
+            json.dump(
+                [task.to_dict() for task in tasks],
+                jf,
+                indent=2
+            )
 
-    return templates
+    return tasks
 
 
 def train(
