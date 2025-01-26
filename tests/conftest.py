@@ -1,5 +1,6 @@
 import pytest
 import pandas
+import os
 
 
 @pytest.fixture(scope="session")
@@ -30,3 +31,17 @@ def mock_input_csv(mock_input_df, tmp_path_factory):
     ) / "mock-input.csv"
     mock_input_df.to_csv(mock_input_csv_path, index=False)
     return str(mock_input_csv_path)
+
+
+@pytest.fixture(scope="session")
+def mock_label_studio_export_json():
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    test_json_filename = f"{dirname}/test-label-studio-export.json"
+    return test_json_filename
+
+
+@pytest.fixture(scope="session")
+def test_config_filename():
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    test_config_filename = f"{dirname}/tests_config.cfg"
+    return test_config_filename

@@ -9,7 +9,7 @@ def read_requirements(filename: str):
 
 setuptools.setup(
     name="mediner",
-    version='0.0.0',
+    version='0.0.1',
     description="Medical NER",
     long_description="Named Entity Recognition for the VA Hospital",
     author="Nathan McCoy",
@@ -19,6 +19,8 @@ setuptools.setup(
     python_requires='>=3.10',
     install_requires=read_requirements('requirements.txt'),
     packages=setuptools.find_packages(),
+    include_package_data=True,
+    package_data={"mediner": ["*.json", "*.cfg"]},
     entry_points={
         "console_scripts": ['mediner=mediner.cli:main'],
     },
