@@ -50,5 +50,5 @@ def mock_label_studio_export_json(mock_input_df, tmp_path_factory):
 @pytest.fixture(scope="session")
 def test_config_filename():
     dirname = os.path.dirname(os.path.abspath(__file__))
-    test_config_filename = f"{dirname}/test_config.cfg"
+    test_config_filename = f"{dirname}/tests_config.cfg"
     return test_config_filename
