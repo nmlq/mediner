@@ -1,0 +1,8 @@
+<View>
+  <Labels name="label" toName="text">
+    <Label value="PIRADS Score" background="#FFA39E"/>
+    <Label value="Prostate dimensions" background="#D4380D"/>
+    <Label value="Prostate volume or gland size" background="#FFC069"/>
+  </Labels>
+  <Text name="text" value="$text"/>
+</View>
