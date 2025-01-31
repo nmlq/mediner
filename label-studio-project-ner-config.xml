@@ -1,8 +1,17 @@
 <View>
   <Labels name="label" toName="text">
-    <Label value="PIRADS Score" background="#FFA39E"/>
-    <Label value="Prostate dimensions" background="#D4380D"/>
-    <Label value="Prostate volume or gland size" background="#FFC069"/>
+    <Label value="PIRADS Score" background="#008cb4"/>
+    <Label value="Prostate dimensions" background="#3a88fe"/>
+    <Label value="Prostate volume or gland size" background="#5e30eb"/>
+    <Label value="MRI Image Type" background="#e392fe"/>
+    <Label value="Tesla Magnet" background="#b51a00"/>
+    <Label value="PSA" background="#ff6a00"/>
+    <Label value="PSA density" background="#ffd877"/>
+    <Label value="Lesion" background="#c4bc00"/>
+    <Label value="Lesion location" background="#263e0f"/>
+    <Label value="Lymphadenopathy" background="#5CDBD3"/>
+    <Label value="Metastasis" background="#096DD9"/>
+    <Label value="Metastasis location" background="#b1dd8c"/>
   </Labels>
   <Text name="text" value="$text"/>
 </View>
