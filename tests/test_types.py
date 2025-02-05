@@ -1,5 +1,4 @@
 from mediner import types
-import datetime
 import dateutil
 
 
