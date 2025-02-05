@@ -1,6 +1,5 @@
 import hashlib
 import json
-import datetime
 import logging
 import spacy
 from mediner import types

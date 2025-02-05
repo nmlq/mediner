@@ -113,14 +113,19 @@ class Task:
     def to_dict(self):
         dictionary = asdict(self)
         if self.updated_at is not None:
-            dictionary['updated_at'] = self.updated_at.isoformat().replace("+00:00", "Z")
+            dictionary['updated_at'] = self.updated_at.isoformat().replace(
+                "+00:00",
+                "Z"
+            )
         return dictionary
 
     @classmethod
     def from_dict(cls, dictionary: dict):
         updated_at = None
         if 'updated_at' in dictionary:
-            updated_at = datetime.datetime.fromisoformat(dictionary['updated_at'])
+            updated_at = datetime.datetime.fromisoformat(
+                dictionary['updated_at']
+            )
 
         return cls(
             data=Data.from_dict(dictionary['data']),

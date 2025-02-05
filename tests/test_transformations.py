@@ -29,7 +29,9 @@ def test_files_to_tasks(mock_label_studio_export_json_filename):
     :return None:
     :raises AssertionError:
     """
-    tasks = transformations.files_to_tasks([mock_label_studio_export_json_filename])
+    tasks = transformations.files_to_tasks(
+        [mock_label_studio_export_json_filename]
+    )
     assert tasks and all([isinstance(task, types.Task) for task in tasks])
 
 
@@ -39,6 +41,8 @@ def test_tasks_to_docbin(mock_label_studio_export_json_filename):
     :return None:
     :raises AssertionError:
     """
-    tasks = transformations.files_to_tasks([mock_label_studio_export_json_filename])
+    tasks = transformations.files_to_tasks(
+        [mock_label_studio_export_json_filename]
+    )
     docbin = transformations.tasks_to_docbin(tasks)
     assert docbin and isinstance(docbin, DocBin) and len(docbin) == len(tasks)

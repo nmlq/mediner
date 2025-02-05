@@ -15,7 +15,9 @@ def test_task_to_from_dictionary():
         meta=types.Meta(
             md5="deadbeef"
         ),
-        updated_at=datetime.datetime.fromisoformat("2025-01-16T22:35:45.345964Z"),
+        updated_at=datetime.datetime.fromisoformat(
+            "2025-01-16T22:35:45.345964Z"
+        ),
         predictions=[
             types.Prediction(
                 model_version="1",
