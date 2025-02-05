@@ -1,5 +1,6 @@
 from mediner import types
 import datetime
+import dateutil
 
 
 def test_task_to_from_dictionary():
@@ -15,7 +16,7 @@ def test_task_to_from_dictionary():
         meta=types.Meta(
             md5="deadbeef"
         ),
-        updated_at=datetime.datetime.fromisoformat(
+        updated_at=dateutil.parser.parse(
             "2025-01-16T22:35:45.345964Z"
         ),
         predictions=[
