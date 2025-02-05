@@ -34,7 +34,7 @@ def mock_input_csv(mock_input_df, tmp_path_factory):
 
 
 @pytest.fixture(scope="session")
-def mock_label_studio_export_json():
+def mock_label_studio_export_json_filename():
     dirname = os.path.dirname(os.path.abspath(__file__))
     test_json_filename = f"{dirname}/test-label-studio-export.json"
     return test_json_filename

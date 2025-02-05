@@ -67,7 +67,7 @@ class EntityResult:
 
 
 @dataclass
-class Prediction:
+class Annotation:
     model_version: str
     score: float
     result: list[EntityResult]
@@ -88,10 +88,16 @@ class Prediction:
 
 
 @dataclass
+class Prediction(Annotation):
+    pass
+
+
+@dataclass
 class Task:
     data: Data
     meta: Meta
     predictions: list[Prediction] = field(default_factory=list)
+    #annotations: list[Annotation] = field(default_factory=list)
 
     def to_dict(self):
         return asdict(self)
