@@ -1,8 +1,8 @@
 import hashlib
 import json
-import datetime
 import logging
 import spacy
+from mediner import types
 from spacy.tokens import DocBin
 
 
@@ -19,9 +19,9 @@ def text_to_md5(text: str) -> str:
     return md5.hexdigest()
 
 
-def files_to_annotations(filenames: list[str]) -> list[dict]:
-    """Take a list of annotation files from label studio
-    and deduplicate annotation objects from filenames.
+def files_to_tasks(filenames: list[str]) -> list[dict]:
+    """Take a list of task project files from label studio
+    and deduplicate objects from the filenames.
 
     :return list: list of annotation dicts from label studio
     """
@@ -29,24 +29,23 @@ def files_to_annotations(filenames: list[str]) -> list[dict]:
     for filename in filenames:
         logger.info(f"Reading annotations from {filename}")
         with open(filename) as jf:
-            annotations = json.load(jf)
-        for annotation in annotations:
-            md5 = text_to_md5(annotation['data']['text'])
+            tasks = [
+                types.Task.from_dict(d)
+                for d in json.load(jf)
+            ]
+        for task in tasks:
+            md5 = text_to_md5(task.data.text)
             if md5 not in dictionary:
-                dictionary[md5] = annotation
+                dictionary[md5] = task
             else:
                 logger.info(f"Duplicate annotation; {md5}")
-                current = datetime.datetime.fromisoformat(
-                    annotation['updated_at']
-                )
-                previous = datetime.datetime.fromisoformat(
-                    dictionary[md5]['updated_at']
-                )
-                if current > previous:
+                current = task.updated_at
+                previous = dictionary[md5].updated_at
+                if current and previous and current > previous:
                     logger.info(
                         f"Replacing older with newer annotation; {md5}"
                     )
-                    dictionary[md5] = annotation
+                    dictionary[md5] = task
     return list(dictionary.values())
 
 
@@ -95,8 +94,8 @@ def merge_overlaps(
     return merged_annotations
 
 
-def annotations_to_docbin(annotations: list[dict]) -> DocBin:
-    """Convert the label studio annotations to the spacy format.
+def tasks_to_docbin(tasks: list[types.Task]) -> DocBin:
+    """Convert the label studio tasks to the spacy format.
 
     :return None:
     """
@@ -104,18 +103,18 @@ def annotations_to_docbin(annotations: list[dict]) -> DocBin:
     docbin = DocBin()
     skipped = 0
     total = 0
-    for annotation in annotations:
-        text = annotation['data']['text']
+    for task in tasks:
+        text = task.data.text
         doc = nlp(text)
         # Annotations are lists of [start, end, label]
         span_labels = [
             [
-                res['value']['start'],
-                res['value']['end'],
-                res['value']['labels'][0]
+                entity_result.value.start,
+                entity_result.value.end,
+                entity_result.value.labels[0]
             ]
-            for ann in annotation['annotations']
-            for res in ann['result']
+            for annotation in task.annotations
+            for entity_result in annotation.result
         ]
         entity_spans = [
             doc.char_span(start, end, label=label, alignment_mode='expand')
@@ -140,7 +139,7 @@ def annotations_to_docbin(annotations: list[dict]) -> DocBin:
 
         docbin.add(doc)
     logger.info(f"Skipped {skipped} entities with whitespace")
-    logger.info(f"Gathered {total} entities from {len(annotations)} inputs")
+    logger.info(f"Gathered {total} entities from {len(tasks)} inputs")
     return docbin
 
 

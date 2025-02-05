@@ -1,4 +1,5 @@
 from mediner import types
+import dateutil
 
 
 def test_task_to_from_dictionary():
@@ -14,6 +15,9 @@ def test_task_to_from_dictionary():
         meta=types.Meta(
             md5="deadbeef"
         ),
+        updated_at=dateutil.parser.parse(
+            "2025-01-16T22:35:45.345964Z"
+        ),
         predictions=[
             types.Prediction(
                 model_version="1",
@@ -21,24 +25,39 @@ def test_task_to_from_dictionary():
                 result=[
                     types.EntityResult(
                         id="ab1",
-                        value=[
-                            types.SpanValue(
-                                start=5,
-                                end=7,
-                                score=1.0,
-                                text="inp",
-                                labels=["LABEL_NAME"]
-                            )
-                        ]
+                        value=types.SpanValue(
+                            start=5,
+                            end=7,
+                            score=1.0,
+                            text="inp",
+                            labels=["LABEL_NAME"]
+                        )
+                    )
+                ]
+            )
+        ],
+        annotations=[
+            types.Annotation(
+                result=[
+                    types.EntityResult(
+                        id="ab1",
+                        value=types.SpanValue(
+                            start=5,
+                            end=7,
+                            score=1.0,
+                            text="inp",
+                            labels=["LABEL_NAME"]
+                        )
                     )
                 ]
             )
         ]
     )
-    dictionary = types.asdict(task)
+    dictionary = task.to_dict()
     expected_dictionary = {
         "data": {"text": "Some input textls"},
         "meta": {"md5": "deadbeef"},
+        "updated_at": "2025-01-16T22:35:45.345964Z",
         "predictions": [{
             "model_version": "1",
             "score": 1.0,
@@ -47,13 +66,28 @@ def test_task_to_from_dictionary():
                 "from_name": "label",
                 "to_name": "text",
                 "type": "labels",
-                "value": [{
+                "value": {
                     "start": 5,
                     "end": 7,
                     "score": 1.0,
                     "text": "inp",
                     "labels": ["LABEL_NAME"]
-                }]
+                }
+            }]
+        }],
+        "annotations": [{
+            "result": [{
+                "id": "ab1",
+                "from_name": "label",
+                "to_name": "text",
+                "type": "labels",
+                "value": {
+                    "start": 5,
+                    "end": 7,
+                    "score": 1.0,
+                    "text": "inp",
+                    "labels": ["LABEL_NAME"]
+                }
             }]
         }]
     }

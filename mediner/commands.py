@@ -122,15 +122,13 @@ def train(
         config_filename = f"{dirname}/config.cfg"
 
     logger.info(f"Training from {len(input_filenames)} filenames")
-    annotations = transformations.files_to_annotations(input_filenames)
-    dev_annotations, train_annotations = transformations.split_dev_train(
-        annotations
-    )
+    tasks = transformations.files_to_tasks(input_filenames)
+    dev_tasks, train_tasks = transformations.split_dev_train(tasks)
     logger.info(
-        f"Split; dev {len(dev_annotations)}, train {len(train_annotations)}"
+        f"Split; dev {len(dev_tasks)}, train {len(train_tasks)}"
     )
-    dev_docbin = transformations.annotations_to_docbin(dev_annotations)
-    train_docbin = transformations.annotations_to_docbin(train_annotations)
+    dev_docbin = transformations.tasks_to_docbin(dev_tasks)
+    train_docbin = transformations.tasks_to_docbin(train_tasks)
     dev_docbin.to_disk(dev_spacy_filename)
     train_docbin.to_disk(train_spacy_filename)
     model_choice = 'model-best'
