@@ -1,4 +1,5 @@
 import datetime
+import dateutil
 from dataclasses import dataclass, asdict, field
 
 
@@ -123,7 +124,7 @@ class Task:
     def from_dict(cls, dictionary: dict):
         updated_at = None
         if 'updated_at' in dictionary:
-            updated_at = datetime.datetime.fromisoformat(
+            updated_at = dateutil.parser.parse(
                 dictionary['updated_at']
             )
 
