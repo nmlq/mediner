@@ -49,9 +49,6 @@ def convert_csv_to_label_studio(
         types.Task(
             data=types.Data(
                 text=row[text_column]
-            ),
-            meta=types.Meta(
-                md5=transformations.text_to_md5(row[text_column])
             )
         )
         for _, row in df.fillna('').iterrows()
@@ -98,7 +95,7 @@ def convert_csv_to_label_studio(
         logger.info(f"Writing to file {output_filename}")
         with open(output_filename, 'w') as jf:
             json.dump(
-                [task.to_dict() for task in tasks],
+                [task.dict() for task in tasks],
                 jf,
                 indent=2
             )

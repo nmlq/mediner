@@ -30,7 +30,7 @@ def files_to_tasks(filenames: list[str]) -> list[dict]:
         logger.info(f"Reading annotations from {filename}")
         with open(filename) as jf:
             tasks = [
-                types.Task.from_dict(d)
+                types.Task(**d)
                 for d in json.load(jf)
             ]
         for task in tasks:

@@ -1,48 +1,57 @@
 import typing
 from dataclasses import dataclass, asdict, field
-from label_studio_sdk.types import task, annotation, prediction
+import datetime as dt
+from label_studio_sdk.core.datetime_utils import serialize_datetime
+from label_studio_sdk.types import annotation, prediction, base_task
+from label_studio_sdk.core.pydantic_utilities import pydantic_v1
 
 
-
-
-@dataclass
-class SpanValue:
+class SpanValue(pydantic_v1.BaseModel):
     start: int
     end: int
-    text: str
-    labels: list[str]
-    score: float = None
+    text: typing.Optional[str] = pydantic_v1.Field(default=None)
+    labels: typing.Optional[typing.List] = pydantic_v1.Field(default=None)
+    score: typing.Optional[float] = pydantic_v1.Field(default=None)
 
-    def to_dict(self):
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, dictionary):
-        return cls(**dictionary)
-
-
-@dataclass
-class EntityResult:
-    id: str
+class EntityResult(pydantic_v1.BaseModel):
+    id: typing.Optional[str] = None
     value: SpanValue
-    from_name: str = "label"
-    to_name: str = "text"
-    type: str = "labels"
+    origin: typing.Optional[str] = pydantic_v1.Field(default="manual")
+    from_name: typing.Optional[str] = pydantic_v1.Field(default="label")
+    to_name: typing.Optional[str] = pydantic_v1.Field(default="text")
+    type: typing.Optional[str] = pydantic_v1.Field(default="labels")
 
-    def to_dict(self):
-        return asdict(self)
+class Annotation(annotation.Annotation):
+    result: typing.Optional[typing.List[EntityResult]]
 
-    @classmethod
-    def from_dict(cls, dictionary):
-        return cls(
-            id=dictionary['id'],
-            value=SpanValue.from_dict(dictionary['value']),
-            from_name=dictionary['from_name'],
-            to_name=dictionary['to_name'],
-            type=dictionary['type'],
-        )
+    def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        dictionary = super().dict(**kwargs)
+        dictionary['updated_at'] = serialize_datetime(dictionary['updated_at'])
+        dictionary['created_at'] = serialize_datetime(dictionary['created_at'])
+        dictionary['draft_created_at'] = serialize_datetime(dictionary['draft_created_at'])
+        return dictionary
 
+class Prediction(prediction.Prediction):
+    result: typing.Optional[typing.List[EntityResult]]
 
-class Task(task.Task):
-    annotations: typing.Optional[typing.List[annotation.Annotation]]
-    predictions: typing.Optional[typing.List[prediction.Prediction]]
+    def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        dictionary = super().dict(**kwargs)
+        dictionary['updated_at'] = serialize_datetime(dictionary['updated_at'])
+        dictionary['created_at'] = serialize_datetime(dictionary['created_at'])
+        return dictionary
+
+class Data(pydantic_v1.BaseModel):
+    text: typing.Optional[str]
+
+class Task(base_task.BaseTask):
+    annotations: typing.Optional[typing.List[Annotation]]
+    predictions: typing.Optional[typing.List[Prediction]]
+    data: typing.Optional[Data]
+
+    def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        dictionary = super().dict(**kwargs)
+        if 'updated_at' in dictionary:
+            dictionary['updated_at'] = serialize_datetime(dictionary['updated_at'])
+        if 'created_at' in dictionary:
+            dictionary['created_at'] = serialize_datetime(dictionary['created_at'])
+        return dictionary
