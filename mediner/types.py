@@ -16,28 +16,33 @@ class SpanValue(pydantic_v1.BaseModel):
 class EntityResult(pydantic_v1.BaseModel):
     id: typing.Optional[str] = None
     value: SpanValue
-    origin: typing.Optional[str] = pydantic_v1.Field(default="manual")
-    from_name: typing.Optional[str] = pydantic_v1.Field(default="label")
-    to_name: typing.Optional[str] = pydantic_v1.Field(default="text")
-    type: typing.Optional[str] = pydantic_v1.Field(default="labels")
+    origin: str = pydantic_v1.Field(default="manual")
+    from_name: str = pydantic_v1.Field(default="label")
+    to_name: str = pydantic_v1.Field(default="text")
+    type: str = pydantic_v1.Field(default="labels")
 
 class Annotation(annotation.Annotation):
     result: typing.Optional[typing.List[EntityResult]]
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         dictionary = super().dict(**kwargs)
-        dictionary['updated_at'] = serialize_datetime(dictionary['updated_at'])
-        dictionary['created_at'] = serialize_datetime(dictionary['created_at'])
-        dictionary['draft_created_at'] = serialize_datetime(dictionary['draft_created_at'])
+        if 'updated_at' in dictionary:
+            dictionary['updated_at'] = serialize_datetime(dictionary['updated_at'])
+        if 'created_at' in dictionary:
+            dictionary['created_at'] = serialize_datetime(dictionary['created_at'])
+        if 'draft_created_at' in dictionary and isinstance(dictionary['draft_created_at'], dt.datetime):
+            dictionary['draft_created_at'] = serialize_datetime(dictionary['draft_created_at'])
         return dictionary
 
 class Prediction(prediction.Prediction):
     result: typing.Optional[typing.List[EntityResult]]
 
-    def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         dictionary = super().dict(**kwargs)
-        dictionary['updated_at'] = serialize_datetime(dictionary['updated_at'])
-        dictionary['created_at'] = serialize_datetime(dictionary['created_at'])
+        if 'updated_at' in dictionary:
+            dictionary['updated_at'] = serialize_datetime(dictionary['updated_at'])
+        if 'created_at' in dictionary:
+            dictionary['created_at'] = serialize_datetime(dictionary['created_at'])
         return dictionary
 
 class Data(pydantic_v1.BaseModel):
