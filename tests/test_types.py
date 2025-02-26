@@ -1,5 +1,4 @@
 from mediner import types
-import dateutil
 
 
 def test_task_to_from_dictionary(mock_label_studio_export_json_data):

@@ -7,6 +7,7 @@ import datetime
 import tqdm
 import os
 
+from uuid import uuid4
 from mediner import transformations
 from mediner import types
 
@@ -61,7 +62,7 @@ def convert_csv_to_label_studio(
         )
         nlp = load(model_filename)
         total_ents = 0
-        for task in tqdm.tqdm(tasks):
+        for task in tqdm.tqdm(tasks, total=len(tasks)):
             doc = nlp(task.data.text)
             total_ents += len(doc.ents)
             task.predictions = [
@@ -70,7 +71,7 @@ def convert_csv_to_label_studio(
                     score=1.0,
                     result=[
                         types.EntityResult(
-                            id=ent.name,
+                            id=uuid4().hex,
                             value=[
                                 types.SpanValue(
                                     start=ent.start_char,
@@ -127,7 +128,9 @@ def convert_jsons_to_label_studio(
     if output_filename and not output_filename.lower().endswith('.json'):
         raise ValueError("Output Filename must be a JSON file")
 
-    logger.info(f"Converting {len(input_filenames)} files to label studio format")
+    logger.info(
+        f"Converting {len(input_filenames)} files to label studio format"
+    )
 
     tasks = transformations.files_to_tasks(input_filenames)
 
@@ -140,7 +143,7 @@ def convert_jsons_to_label_studio(
         )
         nlp = load(model_filename)
         total_ents = 0
-        for i, task in tqdm.tqdm(enumerate(tasks)):
+        for i, task in tqdm.tqdm(enumerate(tasks), total=len(tasks)):
             doc = nlp(task.data.text)
             total_ents += len(doc.ents)
             predictions = [
@@ -150,7 +153,7 @@ def convert_jsons_to_label_studio(
                     task=i,
                     result=[
                         types.EntityResult(
-                            id=ent.text,
+                            id=uuid4().hex,
                             value=types.SpanValue(
                                 start=ent.start_char,
                                 end=ent.end_char,
@@ -168,9 +171,9 @@ def convert_jsons_to_label_studio(
             ]
             updated_tasks.append(
                 types.Task(
-                    data = task.data,
-                    annotations = task.annotations,
-                    predictions = predictions,
+                    data=task.data,
+                    annotations=task.annotations,
+                    predictions=predictions,
                 )
             )
         logger.info(

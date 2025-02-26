@@ -13,3 +13,6 @@ __pycache__
 
 # folders
 mediner_model/
+.DS_Store
+.ipynb_checkpoints
+*ipynb

@@ -35,18 +35,20 @@ def mock_model_load(*a, **k):
         end_char = 5
         text = "mock entity"
         label_ = "mock label"
+
     class MockDoc:
         ents = [MockEnt()]*10
+
     def mock_nlp(*a, **k):
         return MockDoc()
+
     return mock_nlp
 
 
 def test_convert_jsons_to_label_studio_with_predictions(
         mock_label_studio_export_json_filename,
         tmp_path,
-        monkeypatch
-    ):
+        monkeypatch):
     """Test converting the jsons to the label studio format
     mock predict on json inputs
 
