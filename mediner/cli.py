@@ -12,6 +12,7 @@ def get_parser() -> argparse.ArgumentParser:
         description='Medical NER CLI Tool'
     )
     parser.add_argument('--convert-csv-to-label-studio')
+    parser.add_argument('--convert-jsons-to-label-studio', nargs='+')
     parser.add_argument('--text-column')
     parser.add_argument('--output-json')
     parser.add_argument('--model-filename')
@@ -39,6 +40,13 @@ def main() -> None:
         commands.convert_csv_to_label_studio(
             args.convert_csv_to_label_studio,
             args.text_column,
+            args.output_json,
+            args.predict,
+            args.model_filename
+        )
+    if args.convert_jsons_to_label_studio:
+        commands.convert_jsons_to_label_studio(
+            args.convert_jsons_to_label_studio,
             args.output_json,
             args.predict,
             args.model_filename
