@@ -24,6 +24,7 @@ class EntityResult(pydantic_v1.BaseModel):
 
 class Annotation(annotation.Annotation):
     result: typing.Optional[typing.List[EntityResult]]
+    completed_by: typing.Optional[int | typing.Dict]
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         dictionary = super().dict(**kwargs)
