@@ -1,159 +1,79 @@
 [
-    {
-      "id": 1,
-      "annotations": [
-        {
-          "id": 1,
-          "completed_by": 1,
-          "result": [
-            {
-              "value": {
-                "start": 647,
-                "end": 648,
-                "text": "5",
-                "labels": [
-                  "PIRADS Score"
-                ]
-              },
-              "id": "vDe6XogBUJ",
-              "from_name": "label",
-              "to_name": "text",
-              "type": "labels",
-              "origin": "manual"
-            },
-            {
-              "value": {
-                "start": 293,
-                "end": 308,
-                "text": "4.3 x 2.9 x 3.0",
-                "labels": [
-                  "Prostate dimensions"
-                ]
-              },
-              "id": "okRZFmKL-O",
-              "from_name": "label",
-              "to_name": "text",
-              "type": "labels",
-              "origin": "manual"
-            }
-          ],
-          "was_cancelled": false,
-          "ground_truth": false,
-          "created_at": "2025-01-16T22:35:45.345934Z",
-          "updated_at": "2025-01-16T22:35:45.345964Z",
-          "draft_created_at": "2025-01-16T22:34:53.465205Z",
-          "lead_time": 114.708,
-          "prediction": {},
-          "result_count": 2,
-          "unique_id": "302efa25-e354-45d8-aa57-e3d7fb288916",
-          "import_id": null,
-          "last_action": null,
-          "task": 1,
-          "project": 1,
-          "updated_by": 1,
-          "parent_prediction": null,
-          "parent_annotation": null,
-          "last_created_by": null
-        }
-      ],
-      "file_upload": "8314a79b-Copy_of_De-ID_MRI_Sample_1_13_2025-label-studio.json",
-      "drafts": [],
-      "predictions": [],
-      "data": {
-        "text": "\rMRI PELVIS W&W/O CONTRAST\r\rClinical Indication: Elevated PSA and microhematuria.\r\rTechnique: Multi-parametric prostate MRI using 9 cc of Gadavist\rintravenous contrast.  \r\rComparison: None.\r\rBiopsy: None.\r\rPSA:  7.5 ng/mL on 4/11/2022\r\rPSA density:  0.42 ng/mL/cc\r\rThe prostate gland measures 4.3 x 2.9 x 3.0 cm (18 cc). \r\rNo focal suspicious T2 signal within the transitional zone. \r\rScattered mildly heterogeneous T2 signal within the peripheral\rzone bilaterally without focal restricted diffusion, likely\rprostatitis/scarring.\r\rIn the left peripheral zone from the apex almost to the base from\r2-5 o'clock there is a 1.1 x 0.5 x 1.9 cm PI-RADS 5 lesion. This\rbroad-based interface with the capsule and adjacent tissue is\rsuspicious for extraprostatic extension and subtle focal bulge\rtoward the left neurovascular bundle in the apex is suggested\r(series 6-image 14).\r\rThere are is T2 hypointensity (series 6 - images 10/15), ADC map\rhypointensity and high b-value DWI (series 8/102 - images 10/14)\rand there is focal and early enhancement.  \r\rSeminal vesicles are symmetric. \r\rRecto- prostatic fat and fascial planes are intact.\r\rNo focal bladder wall thickening. The urinary bladder is markedly\rdistended even after several attempts at urination.\r\rNo enlarged pelvic lymph nodes.\r\rImaged bowel and rectum without wall thickening. No free fluid. \r\rNo suspicious bone marrow signal or enhancement.\r\r"
-      },
-      "meta": {},
-      "created_at": "2025-01-16T22:29:00.737559Z",
-      "updated_at": "2025-01-16T22:35:45.423742Z",
-      "inner_id": 1,
-      "total_annotations": 1,
-      "cancelled_annotations": 0,
-      "total_predictions": 0,
-      "comment_count": 0,
-      "unresolved_comment_count": 0,
-      "last_comment_updated_at": null,
-      "project": 1,
-      "updated_by": 1,
-      "comment_authors": []
-    },
-    {
-        "id": 2,
-        "annotations": [
+  {
+    "id": 1,
+    "annotations": [
+      {
+        "id": 1,
+        "completed_by": 1,
+        "result": [
           {
-            "id": 1,
-            "completed_by": 1,
-            "result": [
-              {
-                "value": {
-                  "start": 647,
-                  "end": 648,
-                  "text": "5",
-                  "labels": [
-                    "PIRADS Score"
-                  ]
-                },
-                "id": "vDe6XogBUJ",
-                "from_name": "label",
-                "to_name": "text",
-                "type": "labels",
-                "origin": "manual"
-              },
-              {
-                "value": {
-                  "start": 293,
-                  "end": 308,
-                  "text": "4.3 x 2.9 x 3.0",
-                  "labels": [
-                    "Prostate dimensions"
-                  ]
-                },
-                "id": "okRZFmKL-O",
-                "from_name": "label",
-                "to_name": "text",
-                "type": "labels",
-                "origin": "manual"
-              }
-            ],
-            "was_cancelled": false,
-            "ground_truth": false,
-            "created_at": "2025-01-16T22:35:45.345934Z",
-            "updated_at": "2025-01-16T22:35:45.345964Z",
-            "draft_created_at": "2025-01-16T22:34:53.465205Z",
-            "lead_time": 114.708,
-            "prediction": {},
-            "result_count": 2,
-            "unique_id": "302efa25-e354-45d8-aa57-e3d7fb288916",
-            "import_id": null,
-            "last_action": null,
-            "task": 1,
-            "project": 1,
-            "updated_by": 1,
-            "parent_prediction": null,
-            "parent_annotation": null,
-            "last_created_by": null
+            "value": {
+              "start": 647,
+              "end": 648,
+              "text": "5",
+              "labels": [
+                "PIRADS Score"
+              ]
+            },
+            "id": "vDe6XogBUJ",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels",
+            "origin": "manual"
+          },
+          {
+            "value": {
+              "start": 293,
+              "end": 308,
+              "text": "4.3 x 2.9 x 3.0",
+              "labels": [
+                "Prostate dimensions"
+              ]
+            },
+            "id": "okRZFmKL-O",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels",
+            "origin": "manual"
           }
         ],
-        "file_upload": "8314a79b-Copy_of_De-ID_MRI_Sample_1_13_2025-label-studio.json",
-        "drafts": [],
-        "predictions": [],
-        "data": {
-          "text": "\rMRI PELVIS W&W/O CONTRAST\r\rClinical Indication: Elevated PSA and microhematuria.\r\rTechnique: Multi-parametric prostate MRI using 9 cc of Gadavist\rintravenous contrast.  \r\rComparison: None.\r\rBiopsy: None.\r\rPSA:  7.5 ng/mL on 4/11/2022\r\rPSA density:  0.42 ng/mL/cc\r\rThe prostate gland measures 4.3 x 2.9 x 3.0 cm (18 cc). \r\rNo focal suspicious T2 signal within the transitional zone. \r\rScattered mildly heterogeneous T2 signal within the peripheral\rzone bilaterally without focal restricted diffusion, likely\rprostatitis/scarring.\r\rIn the left peripheral zone from the apex almost to the base from\r2-5 o'clock there is a 1.1 x 0.5 x 1.9 cm PI-RADS 5 lesion. This\rbroad-based interface with the capsule and adjacent tissue is\rsuspicious for extraprostatic extension and subtle focal bulge\rtoward the left neurovascular bundle in the apex is suggested\r(series 6-image 14).\r\rThere are is T2 hypointensity (series 6 - images 10/15), ADC map\rhypointensity and high b-value DWI (series 8/102 - images 10/14)\rand there is focal and early enhancement.  \r\rSeminal vesicles are symmetric. \r\rRecto- prostatic fat and fascial planes are intact.\r\rNo focal bladder wall thickening. The urinary bladder is markedly\rdistended even after several attempts at urination.\r\rNo enlarged pelvic lymph nodes.\r\rImaged bowel and rectum without wall thickening. No free fluid. \r\rNo suspicious bone marrow signal or enhancement.\r\r"
-        },
-        "meta": {
-            "md5": "deadbeef"
-        },
-        "created_at": "2025-01-16T22:29:00.737559Z",
-        "updated_at": "2025-01-16T22:35:45.423742Z",
-        "inner_id": 1,
-        "total_annotations": 1,
-        "cancelled_annotations": 0,
-        "total_predictions": 0,
-        "comment_count": 0,
-        "unresolved_comment_count": 0,
-        "last_comment_updated_at": null,
+        "was_cancelled": false,
+        "ground_truth": false,
+        "created_at": "2025-01-16T22:35:45.345934Z",
+        "updated_at": "2025-01-16T22:35:45.345964Z",
+        "draft_created_at": "2025-01-16T22:34:53.465205Z",
+        "lead_time": 114.708,
+        "prediction": {},
+        "result_count": 2,
+        "unique_id": "302efa25-e354-45d8-aa57-e3d7fb288916",
+        "import_id": null,
+        "last_action": null,
+        "task": 1,
         "project": 1,
         "updated_by": 1,
-        "comment_authors": []
+        "parent_prediction": null,
+        "parent_annotation": null,
+        "last_created_by": null
       }
-  ]
-  
+    ],
+    "file_upload": "8314a79b-Copy_of_De-ID_MRI_Sample_1_13_2025-label-studio.json",
+    "drafts": [],
+    "predictions": [],
+    "data": {
+      "text": "\rMRI PELVIS W&W/O CONTRAST\r\rClinical Indication: Elevated PSA and microhematuria.\r\rTechnique: Multi-parametric prostate MRI using 9 cc of Gadavist\rintravenous contrast.  \r\rComparison: None.\r\rBiopsy: None.\r\rPSA:  7.5 ng/mL on 4/11/2022\r\rPSA density:  0.42 ng/mL/cc\r\rThe prostate gland measures 4.3 x 2.9 x 3.0 cm (18 cc). \r\rNo focal suspicious T2 signal within the transitional zone. \r\rScattered mildly heterogeneous T2 signal within the peripheral\rzone bilaterally without focal restricted diffusion, likely\rprostatitis/scarring.\r\rIn the left peripheral zone from the apex almost to the base from\r2-5 o'clock there is a 1.1 x 0.5 x 1.9 cm PI-RADS 5 lesion. This\rbroad-based interface with the capsule and adjacent tissue is\rsuspicious for extraprostatic extension and subtle focal bulge\rtoward the left neurovascular bundle in the apex is suggested\r(series 6-image 14).\r\rThere are is T2 hypointensity (series 6 - images 10/15), ADC map\rhypointensity and high b-value DWI (series 8/102 - images 10/14)\rand there is focal and early enhancement.  \r\rSeminal vesicles are symmetric. \r\rRecto- prostatic fat and fascial planes are intact.\r\rNo focal bladder wall thickening. The urinary bladder is markedly\rdistended even after several attempts at urination.\r\rNo enlarged pelvic lymph nodes.\r\rImaged bowel and rectum without wall thickening. No free fluid. \r\rNo suspicious bone marrow signal or enhancement.\r\r"
+    },
+    "meta": {},
+    "created_at": "2025-01-16T22:29:00.737559Z",
+    "updated_at": "2025-01-16T22:35:45.423742Z",
+    "inner_id": 1,
+    "total_annotations": 1,
+    "cancelled_annotations": 0,
+    "total_predictions": 0,
+    "comment_count": 0,
+    "unresolved_comment_count": 0,
+    "last_comment_updated_at": null,
+    "project": 1,
+    "updated_by": 1,
+    "comment_authors": []
+  }
+]

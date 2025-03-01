@@ -1,143 +1,82 @@
-import datetime
-import dateutil
-from dataclasses import dataclass, asdict, field
+import typing
+import datetime as dt
+from label_studio_sdk.core.datetime_utils import serialize_datetime
+from label_studio_sdk.types import annotation, prediction, base_task
+from label_studio_sdk.core.pydantic_utilities import pydantic_v1
 
 
-@dataclass
-class Data:
-    text: str
-
-    def to_dict(self):
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, dictionary):
-        return cls(**dictionary)
-
-
-@dataclass
-class Meta:
-    md5: str = None
-
-    def to_dict(self):
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, dictionary):
-        return cls(**dictionary)
-
-
-@dataclass
-class SpanValue:
+class SpanValue(pydantic_v1.BaseModel):
     start: int
     end: int
-    text: str
-    labels: list[str]
-    score: float = None
-
-    def to_dict(self):
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, dictionary):
-        return cls(**dictionary)
+    text: typing.Optional[str] = pydantic_v1.Field(default=None)
+    labels: typing.Optional[typing.List] = pydantic_v1.Field(default=None)
+    score: typing.Optional[float] = pydantic_v1.Field(default=None)
 
 
-@dataclass
-class EntityResult:
-    id: str
+class EntityResult(pydantic_v1.BaseModel):
+    id: typing.Optional[str] = None
     value: SpanValue
-    from_name: str = "label"
-    to_name: str = "text"
-    type: str = "labels"
-
-    def to_dict(self):
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, dictionary):
-        return cls(
-            id=dictionary['id'],
-            value=SpanValue.from_dict(dictionary['value']),
-            from_name=dictionary['from_name'],
-            to_name=dictionary['to_name'],
-            type=dictionary['type'],
-        )
+    origin: str = pydantic_v1.Field(default="manual")
+    from_name: str = pydantic_v1.Field(default="label")
+    to_name: str = pydantic_v1.Field(default="text")
+    type: str = pydantic_v1.Field(default="labels")
 
 
-@dataclass
-class Annotation:
-    result: list[EntityResult]
+class Annotation(annotation.Annotation):
+    result: typing.Optional[typing.List[EntityResult]]
+    completed_by: typing.Optional[int | typing.Dict]
 
-    def to_dict(self):
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, dictionary):
-        return cls(
-            result=[
-                EntityResult.from_dict(entity_result)
-                for entity_result in dictionary['result']
-            ]
-        )
-
-
-@dataclass
-class Prediction:
-    result: list[EntityResult]
-    model_version: str
-    score: float
-
-    def to_dict(self):
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, dictionary):
-        return cls(
-            model_version=dictionary['model_version'],
-            score=dictionary['score'],
-            result=[
-                EntityResult.from_dict(entity_result)
-                for entity_result in dictionary['result']
-            ]
-        )
-
-
-@dataclass
-class Task:
-    data: Data
-    meta: Meta
-    updated_at: datetime.datetime = None
-    predictions: list[Prediction] = field(default_factory=list)
-    annotations: list[Annotation] = field(default_factory=list)
-
-    def to_dict(self):
-        dictionary = asdict(self)
-        if self.updated_at is not None:
-            dictionary['updated_at'] = self.updated_at.isoformat().replace(
-                "+00:00",
-                "Z"
+    def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        dictionary = super().dict(**kwargs)
+        if 'updated_at' in dictionary:
+            dictionary['updated_at'] = serialize_datetime(
+                dictionary['updated_at']
+            )
+        if 'created_at' in dictionary:
+            dictionary['created_at'] = serialize_datetime(
+                dictionary['created_at']
+            )
+        if 'draft_created_at' in dictionary and isinstance(
+                dictionary['draft_created_at'], dt.datetime):
+            dictionary['draft_created_at'] = serialize_datetime(
+                dictionary['draft_created_at']
             )
         return dictionary
 
-    @classmethod
-    def from_dict(cls, dictionary: dict):
-        updated_at = None
+
+class Prediction(prediction.Prediction):
+    result: typing.Optional[typing.List[EntityResult]]
+
+    def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        dictionary = super().dict(**kwargs)
         if 'updated_at' in dictionary:
-            updated_at = dateutil.parser.parse(
+            dictionary['updated_at'] = serialize_datetime(
                 dictionary['updated_at']
             )
+        if 'created_at' in dictionary:
+            dictionary['created_at'] = serialize_datetime(
+                dictionary['created_at']
+            )
+        return dictionary
 
-        return cls(
-            data=Data.from_dict(dictionary['data']),
-            meta=Meta.from_dict(dictionary['meta']),
-            updated_at=updated_at,
-            predictions=[
-                Prediction.from_dict(prediction)
-                for prediction in dictionary.get("predictions", [])
-            ],
-            annotations=[
-                Annotation.from_dict(annotation)
-                for annotation in dictionary.get("annotations", [])
-            ]
-        )
+
+class Data(pydantic_v1.BaseModel):
+    text: typing.Optional[str]
+
+
+class Task(base_task.BaseTask):
+    annotations: typing.Optional[typing.List[Annotation]]
+    predictions: typing.Optional[typing.List[Prediction]]
+    data: typing.Optional[Data]
+
+    def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        dictionary = super().dict(**kwargs)
+        if 'updated_at' in dictionary:
+            dictionary['updated_at'] = serialize_datetime(
+                dictionary['updated_at']
+            )
+        if 'created_at' in dictionary:
+            dictionary['created_at'] = serialize_datetime(
+                dictionary['created_at']
+            )
+        return dictionary

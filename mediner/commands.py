@@ -7,6 +7,7 @@ import datetime
 import tqdm
 import os
 
+from uuid import uuid4
 from mediner import transformations
 from mediner import types
 
@@ -49,9 +50,6 @@ def convert_csv_to_label_studio(
         types.Task(
             data=types.Data(
                 text=row[text_column]
-            ),
-            meta=types.Meta(
-                md5=transformations.text_to_md5(row[text_column])
             )
         )
         for _, row in df.fillna('').iterrows()
@@ -64,7 +62,7 @@ def convert_csv_to_label_studio(
         )
         nlp = load(model_filename)
         total_ents = 0
-        for task in tqdm.tqdm(tasks):
+        for task in tqdm.tqdm(tasks, total=len(tasks)):
             doc = nlp(task.data.text)
             total_ents += len(doc.ents)
             task.predictions = [
@@ -73,7 +71,7 @@ def convert_csv_to_label_studio(
                     score=1.0,
                     result=[
                         types.EntityResult(
-                            id=ent.name,
+                            id=uuid4().hex,
                             value=[
                                 types.SpanValue(
                                     start=ent.start_char,
@@ -98,7 +96,98 @@ def convert_csv_to_label_studio(
         logger.info(f"Writing to file {output_filename}")
         with open(output_filename, 'w') as jf:
             json.dump(
-                [task.to_dict() for task in tasks],
+                [task.dict() for task in tasks],
+                jf,
+                indent=2
+            )
+
+    return tasks
+
+
+def convert_jsons_to_label_studio(
+        input_filenames: list[str],
+        output_filename: str = None,
+        predict: bool = False,
+        model_filename: str = None) -> list[types.Task]:
+    """Convert a json label studio files to a single label studio format file.
+    Can add predicitons if predict is True and a model filename present.
+
+    Output file should be .json format for importing into label studio
+
+    returns list of dictionaries, if output_filename defined saves to disk
+
+    :param str input_filename:
+    :param str text_column:
+    :param str output_filename:
+    :return list: list of Task
+    """
+    for input_filename in input_filenames:
+        if not input_filename.lower().endswith('.json'):
+            raise ValueError("Input Filename must be a json file")
+
+    if output_filename and not output_filename.lower().endswith('.json'):
+        raise ValueError("Output Filename must be a JSON file")
+
+    logger.info(
+        f"Converting {len(input_filenames)} files to label studio format"
+    )
+
+    tasks = transformations.files_to_tasks(input_filenames)
+
+    logger.info(f"Gathered {len(tasks)} tasks from input files")
+
+    if predict and model_filename:
+        updated_tasks = []
+        logger.info(
+            f"Predictions enabled, predicting on all inputs {len(tasks)}"
+        )
+        nlp = load(model_filename)
+        total_ents = 0
+        for i, task in tqdm.tqdm(enumerate(tasks), total=len(tasks)):
+            doc = nlp(task.data.text)
+            total_ents += len(doc.ents)
+            predictions = [
+                types.Prediction(
+                    model_version=model_filename,
+                    score=1.0,
+                    task=i,
+                    result=[
+                        types.EntityResult(
+                            id=uuid4().hex,
+                            value=types.SpanValue(
+                                start=ent.start_char,
+                                end=ent.end_char,
+                                score=1.0,
+                                text=ent.text,
+                                labels=[ent.label_]
+                            ),
+                            from_name="label",
+                            to_name="text",
+                            type="labels",
+                        )
+                        for ent in doc.ents
+                    ]
+                )
+            ]
+            updated_tasks.append(
+                types.Task(
+                    data=task.data,
+                    annotations=task.annotations,
+                    predictions=predictions,
+                )
+            )
+        logger.info(
+            f"Added total {total_ents} entities to {len(tasks)} tasks"
+        )
+        tasks = updated_tasks
+
+    logger.info(f"Created {len(tasks)} tasks for label studio")
+
+    if output_filename:
+        logger.info(f"Writing to file {output_filename}")
+        with open(output_filename, 'w') as jf:
+            json.dump(
+                [task.dict() for task in tasks],
                 jf,
                 indent=2
             )
