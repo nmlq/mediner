@@ -65,8 +65,8 @@ class Data(pydantic_v1.BaseModel):
 
 
 class Task(base_task.BaseTask):
-    annotations: typing.Optional[typing.List[Annotation|int]]
-    predictions: typing.Optional[typing.List[Prediction|int]]
+    annotations: typing.Optional[typing.List[Annotation | int]]
+    predictions: typing.Optional[typing.List[Prediction | int]]
     data: typing.Optional[Data]
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
