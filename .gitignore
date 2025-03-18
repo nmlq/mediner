@@ -16,3 +16,4 @@ mediner_model/
 .DS_Store
 .ipynb_checkpoints
 *ipynb
+*tar.gz

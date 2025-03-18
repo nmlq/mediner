@@ -1,10 +1,10 @@
 [
   {
-    "id": 1,
+    "id": 44423,
     "annotations": [
       {
-        "id": 1,
-        "completed_by": 1,
+        "id": 287,
+        "completed_by": 2,
         "result": [
           {
             "value": {
@@ -35,45 +35,523 @@
             "to_name": "text",
             "type": "labels",
             "origin": "manual"
+          },
+          {
+            "value": {
+              "start": 211,
+              "end": 215,
+              "text": "7.5",
+              "labels": [
+                "PSA"
+              ]
+            },
+            "id": "lg-OXF4iZj",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels",
+            "origin": "manual"
+          },
+          {
+            "value": {
+              "start": 249,
+              "end": 254,
+              "text": "0.42",
+              "labels": [
+                "PSA density"
+              ]
+            },
+            "id": "k0VohiFraf",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels",
+            "origin": "manual"
+          },
+          {
+            "value": {
+              "start": 416,
+              "end": 418,
+              "text": "T2",
+              "labels": [
+                "MRI Image Type"
+              ]
+            },
+            "id": "379Umd2VjF",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels",
+            "origin": "manual"
+          },
+          {
+            "value": {
+              "start": 884,
+              "end": 886,
+              "text": "T2",
+              "labels": [
+                "MRI Image Type"
+              ]
+            },
+            "id": "g9PrnpO6o1",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels",
+            "origin": "manual"
+          },
+          {
+            "value": {
+              "start": 967,
+              "end": 970,
+              "text": "DWI",
+              "labels": [
+                "MRI Image Type"
+              ]
+            },
+            "id": "Ju7lDFPOTH",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels",
+            "origin": "manual"
+          },
+          {
+            "value": {
+              "start": 343,
+              "end": 345,
+              "text": "T2",
+              "labels": [
+                "MRI Image Type"
+              ]
+            },
+            "id": "e_pMqjBJJz",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels",
+            "origin": "manual"
+          },
+          {
+            "value": {
+              "start": 94,
+              "end": 110,
+              "text": "Multi-parametric",
+              "labels": [
+                "MRI Image Type"
+              ]
+            },
+            "id": "KyJl1zgSf6",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels",
+            "origin": "manual"
+          },
+          {
+            "value": {
+              "start": 313,
+              "end": 315,
+              "text": "18",
+              "labels": [
+                "Prostate volume or gland size"
+              ]
+            },
+            "id": "JLs60FFFxL",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels",
+            "origin": "manual"
           }
         ],
         "was_cancelled": false,
         "ground_truth": false,
-        "created_at": "2025-01-16T22:35:45.345934Z",
-        "updated_at": "2025-01-16T22:35:45.345964Z",
-        "draft_created_at": "2025-01-16T22:34:53.465205Z",
-        "lead_time": 114.708,
+        "created_at": "2025-03-06T05:08:10.545890Z",
+        "updated_at": "2025-03-06T22:50:07.831216Z",
+        "draft_created_at": null,
+        "lead_time": 816.698,
         "prediction": {},
-        "result_count": 2,
-        "unique_id": "302efa25-e354-45d8-aa57-e3d7fb288916",
-        "import_id": null,
+        "result_count": 10,
+        "unique_id": "d9f95764-539c-45cc-a812-40685bb9ec49",
+        "import_id": 1,
         "last_action": null,
-        "task": 1,
-        "project": 1,
+        "bulk_created": false,
+        "task": 44423,
+        "project": 2,
         "updated_by": 1,
         "parent_prediction": null,
         "parent_annotation": null,
         "last_created_by": null
       }
     ],
-    "file_upload": "8314a79b-Copy_of_De-ID_MRI_Sample_1_13_2025-label-studio.json",
+    "file_upload": "1932a7c5-project-2-at-2025-03-05-22-34-ad618bc8-full-export-label-studio-cli-w_aMDFx1K.json",
     "drafts": [],
-    "predictions": [],
+    "predictions": [
+      48760
+    ],
     "data": {
       "text": "\rMRI PELVIS W&W/O CONTRAST\r\rClinical Indication: Elevated PSA and microhematuria.\r\rTechnique: Multi-parametric prostate MRI using 9 cc of Gadavist\rintravenous contrast.  \r\rComparison: None.\r\rBiopsy: None.\r\rPSA:  7.5 ng/mL on 4/11/2022\r\rPSA density:  0.42 ng/mL/cc\r\rThe prostate gland measures 4.3 x 2.9 x 3.0 cm (18 cc). \r\rNo focal suspicious T2 signal within the transitional zone. \r\rScattered mildly heterogeneous T2 signal within the peripheral\rzone bilaterally without focal restricted diffusion, likely\rprostatitis/scarring.\r\rIn the left peripheral zone from the apex almost to the base from\r2-5 o'clock there is a 1.1 x 0.5 x 1.9 cm PI-RADS 5 lesion. This\rbroad-based interface with the capsule and adjacent tissue is\rsuspicious for extraprostatic extension and subtle focal bulge\rtoward the left neurovascular bundle in the apex is suggested\r(series 6-image 14).\r\rThere are is T2 hypointensity (series 6 - images 10/15), ADC map\rhypointensity and high b-value DWI (series 8/102 - images 10/14)\rand there is focal and early enhancement.  \r\rSeminal vesicles are symmetric. \r\rRecto- prostatic fat and fascial planes are intact.\r\rNo focal bladder wall thickening. The urinary bladder is markedly\rdistended even after several attempts at urination.\r\rNo enlarged pelvic lymph nodes.\r\rImaged bowel and rectum without wall thickening. No free fluid. \r\rNo suspicious bone marrow signal or enhancement.\r\r"
     },
     "meta": {},
-    "created_at": "2025-01-16T22:29:00.737559Z",
-    "updated_at": "2025-01-16T22:35:45.423742Z",
+    "created_at": "2025-03-06T05:07:28.011777Z",
+    "updated_at": "2025-03-06T22:50:07.927893Z",
     "inner_id": 1,
     "total_annotations": 1,
     "cancelled_annotations": 0,
-    "total_predictions": 0,
+    "total_predictions": 1,
     "comment_count": 0,
     "unresolved_comment_count": 0,
     "last_comment_updated_at": null,
-    "project": 1,
+    "project": 2,
     "updated_by": 1,
+    "comment_authors": []
+  },
+  {
+    "id": 44424,
+    "annotations": [
+      {
+        "id": 288,
+        "completed_by": 2,
+        "result": [
+          {
+            "id": "hLq6kV6Uzi",
+            "value": {
+              "start": 855,
+              "end": 871,
+              "text": "4.4 x 5.3 x 6.7",
+              "labels": [
+                "Prostate dimensions"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "6Nd-8dj0Wj",
+            "value": {
+              "start": 914,
+              "end": 921,
+              "text": "81.81 ",
+              "labels": [
+                "Prostate volume or gland size"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "2zuHIbLkmJ",
+            "value": {
+              "start": 308,
+              "end": 309,
+              "text": "3",
+              "labels": [
+                "Tesla Magnet"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "SokLDA8laW",
+            "value": {
+              "start": 487,
+              "end": 489,
+              "text": "T1",
+              "labels": [
+                "MRI Image Type"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "hJe9ykbJ7q",
+            "value": {
+              "start": 520,
+              "end": 522,
+              "text": "T2",
+              "labels": [
+                "MRI Image Type"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "UDn1S9C9xD",
+            "value": {
+              "start": 103,
+              "end": 107,
+              "text": "6.22",
+              "labels": [
+                "PSA"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "A6tB4s805n",
+            "value": {
+              "start": 1177,
+              "end": 1179,
+              "text": "T2",
+              "labels": [
+                "MRI Image Type"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "eHnobAuLx9",
+            "value": {
+              "start": 1254,
+              "end": 1256,
+              "text": "T2",
+              "labels": [
+                "MRI Image Type"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "NLMq2-Z2Xu",
+            "value": {
+              "start": 1729,
+              "end": 1765,
+              "text": "No suspicious pelvic lymphadenopathy",
+              "labels": [
+                "Lymphadenopathy"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          }
+        ],
+        "was_cancelled": false,
+        "ground_truth": false,
+        "created_at": "2025-03-06T05:08:10.548121Z",
+        "updated_at": "2025-03-06T05:08:10.548141Z",
+        "draft_created_at": null,
+        "lead_time": 269.672,
+        "prediction": {},
+        "result_count": 0,
+        "unique_id": "04a8c7b5-7eb0-40c7-831a-af0bbe8a059d",
+        "import_id": 2,
+        "last_action": null,
+        "bulk_created": false,
+        "task": 44424,
+        "project": 2,
+        "updated_by": null,
+        "parent_prediction": null,
+        "parent_annotation": null,
+        "last_created_by": null
+      }
+    ],
+    "file_upload": "1932a7c5-project-2-at-2025-03-05-22-34-ad618bc8-full-export-label-studio-cli-w_aMDFx1K.json",
+    "drafts": [],
+    "predictions": [
+      48761
+    ],
+    "data": {
+      "text": "MR PELVIS (PROSTATE) WITHOUT & WITH IV CONTRAST\r\n\r\nCLINICAL INDICATION:  Elevated PSA. Most recent PSA 6.22\r\n(030-2019). History of prior negative biopsy (2001).\r\n\r\nCOMPARISON:  None.\r\n\r\nTECHNIQUE:  Informed consent obtained. Multiparametric\r\nmultiplanar, multisequence MRI of the pelvis was performed on a\r\n3-Tesla MRI unit with attention to the prostate gland utilizing\r\nan external surface coil before and after the administration of\r\nintravenous gadolinium-based contrast. Axial TSE T1w,\r\naxial/sagittal/coronal TSE T2w, diffusion-weighted imaging with\r\nADC maps (b-values up to 1500), and dynamic contrast-enhanced\r\nsequences were performed. CAD was utilized with a separate\r\nadvanced post-processing workstation (DynaCAD). No reported\r\ncomplications.\r\n\r\nCONTRAST:  7 mL Gadavist.\r\n\r\nFINDINGS:\r\n\r\nPROSTATE GLAND:\r\n - Size:  Enlarged.\r\n - Dimensions:  4.4 x 5.3 x 6.7 cm (AP x TV x CC).\r\n - Calculated Volume:  81.81 mL.\r\n\r\nCentral Gland: \r\n - Moderate to severe changes of benign prostatic hyperplasia.\r\nProminent median lobe projects into the bladder. No suspicious\r\nfocal central gland abnormality.\r\n\r\nPeripheral zone: \r\n - Atrophic with mildly heterogeneous background T2\r\nhyperintensity. No suspicious focal restricted diffusion,\r\ncircumscribed T2 hypointensity, or focal early hyperenhancement.\r\n\r\nTransition zone:\r\n - Multiple background heterogeneous encapsulated nodules in\r\nkeeping with benign prostatic hyperplasia.\r\n\r\nSeminal vesicles:  \r\n - Within normal limits. Note is made of a prostatic utricle\r\ncyst, benign.\r\n\r\nNeurovascular Bundles:  \r\n - Within normal limits.\r\n\r\nUrinary bladder:  \r\n - Trabeculated hypertrophic wall thickening, most compatible\r\nchronic bladder outlet obstruction.\r\n\r\nLymph nodes:  \r\n - No suspicious pelvic lymphadenopathy.\r\n\r\nBones:  \r\n - No suspicious destructive osseous lesion.\r\n\r\n\r\nOTHER:  \r\n\r\nStatus post right and possibly left inguinal hernia repair.\r\n\r\n\r\n"
+    },
+    "meta": {},
+    "created_at": "2025-03-06T05:07:28.014292Z",
+    "updated_at": "2025-03-06T05:07:28.014302Z",
+    "inner_id": 2,
+    "total_annotations": 1,
+    "cancelled_annotations": 0,
+    "total_predictions": 1,
+    "comment_count": 0,
+    "unresolved_comment_count": 0,
+    "last_comment_updated_at": null,
+    "project": 2,
+    "updated_by": null,
+    "comment_authors": []
+  },
+  {
+    "id": 44425,
+    "annotations": [
+      {
+        "id": 289,
+        "completed_by": 2,
+        "result": [
+          {
+            "id": "Mr7WQtkMck",
+            "value": {
+              "start": 330,
+              "end": 343,
+              "text": "3.3 x 4.6 x 4",
+              "labels": [
+                "Prostate dimensions"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "I8arXYafpF",
+            "value": {
+              "start": 257,
+              "end": 261,
+              "text": "6.18",
+              "labels": [
+                "PSA"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "LprXsYu9_y",
+            "value": {
+              "start": 284,
+              "end": 289,
+              "text": " 0.15",
+              "labels": [
+                "PSA density"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "75hmCTr6XU",
+            "value": {
+              "start": 432,
+              "end": 434,
+              "text": "T2",
+              "labels": [
+                "MRI Image Type"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "OFPL9fPKkS",
+            "value": {
+              "start": 750,
+              "end": 752,
+              "text": "T2",
+              "labels": [
+                "MRI Image Type"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "jC7cI6MXeZ",
+            "value": {
+              "start": 787,
+              "end": 790,
+              "text": "DWI",
+              "labels": [
+                "MRI Image Type"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "ud_ykFZZjl",
+            "value": {
+              "start": 844,
+              "end": 881,
+              "text": "posterolateral right\\n\\nperipheral zone",
+              "labels": [
+                "Lesion location"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          },
+          {
+            "id": "WSGBaGBPFv",
+            "value": {
+              "start": 1145,
+              "end": 1176,
+              "text": "No enlarged\\n\\npelvic lymph nodes",
+              "labels": [
+                "Lymphadenopathy"
+              ]
+            },
+            "origin": "manual",
+            "from_name": "label",
+            "to_name": "text",
+            "type": "labels"
+          }
+        ],
+        "was_cancelled": false,
+        "ground_truth": false,
+        "created_at": "2025-03-06T05:08:10.548232Z",
+        "updated_at": "2025-03-06T05:08:10.548241Z",
+        "draft_created_at": null,
+        "lead_time": 253.183,
+        "prediction": {},
+        "result_count": 0,
+        "unique_id": "c0a972da-ed94-4014-8826-b84bbd6dcd25",
+        "import_id": 3,
+        "last_action": null,
+        "bulk_created": false,
+        "task": 44425,
+        "project": 2,
+        "updated_by": null,
+        "parent_prediction": null,
+        "parent_annotation": null,
+        "last_created_by": null
+      }
+    ],
+    "file_upload": "1932a7c5-project-2-at-2025-03-05-22-34-ad618bc8-full-export-label-studio-cli-w_aMDFx1K.json",
+    "drafts": [],
+    "predictions": [
+      48762
+    ],
+    "data": {
+      "text": "\r\nMRI PELVIS W&W/O CONTRAST\r\n\r\nClinical Indication: Prostate cancer.\r\n\r\nTechnique: Multi-parametric prostate MRI using 8.5 cc of Gadavist\r\nintravenous contrast.  \r\n\r\nComparison: MRI dated 11/01/2017.\r\n\r\nResults: \r\n\r\nBiopsy = positive on 02/08/2018\r\n\r\nPSA = 6.18 ng/mL\r\n\r\nPSA density = 0.15 ng/mL/cc\r\n\r\nThe prostate gland measures 3.3 x 4.6 x 4 cm (40 cc) with mild\r\nchanges of BPH within the transitional zone. No focal suspicious\r\nT2 signal within the transitional zone. Two focal areas of\r\nhypointense ADC signal measuring 1.2 cm in the anterolateral\r\nright peripheral zone at the base and 1.7 cm in the\r\nposterolateral right peripheral zone at the mid gland/apex appear\r\nslightly enlarged from prior MRI and demonstrate corresponding\r\nhypointense T2 signal, hyperintense high b-value DWI signal, and\r\ntype III curve kinetic enhancement. The posterolateral right\r\nperipheral zone lesion demonstrates a broad base of contact with\r\nthe capsule suggestive of extraprostatic extension with\r\nencroachment of the right neurovascular bundle. Seminal vesicles\r\nare symmetric. Intact mesorectal fat.\r\n\r\nNo focal bladder wall thickening. No free fluid. No enlarged\r\npelvic lymph nodes.\r\n\r\nImaged bowel and rectum without wall thickening. Small\r\nfat-containing left inguinal hernia.\r\n\r\nNo suspicious bone marrow signal or enhancement.\r\n\r\n"
+    },
+    "meta": {},
+    "created_at": "2025-03-06T05:07:28.015112Z",
+    "updated_at": "2025-03-06T05:07:28.015137Z",
+    "inner_id": 3,
+    "total_annotations": 1,
+    "cancelled_annotations": 0,
+    "total_predictions": 1,
+    "comment_count": 0,
+    "unresolved_comment_count": 0,
+    "last_comment_updated_at": null,
+    "project": 2,
+    "updated_by": null,
     "comment_authors": []
   }
 ]
