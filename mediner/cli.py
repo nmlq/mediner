@@ -11,16 +11,67 @@ def get_parser() -> argparse.ArgumentParser:
         prog='mediner',
         description='Medical NER CLI Tool'
     )
-    parser.add_argument('--convert-csv-to-label-studio')
-    parser.add_argument('--convert-jsons-to-label-studio', nargs='+')
-    parser.add_argument('--text-column')
-    parser.add_argument('--output-json')
-    parser.add_argument('--model-filename')
-    parser.add_argument('--predict', action='store_true')
-    parser.add_argument('--train', action='store_true')
-    parser.add_argument('--exported-jsons', nargs='+')
-    parser.add_argument('--load')
-    parser.add_argument('--debug', action='store_true')
+    parser.add_argument(
+        '--convert-csv-to-label-studio',
+        help="Convert CSV to importable label-studio format"
+    )
+    parser.add_argument(
+        '--convert-jsons-to-label-studio',
+        nargs='+',
+        help=(
+            "Convert exported json files"
+            " from label-studio format "
+            "to reimport, for adding predictions."
+        )
+    )
+    parser.add_argument(
+        '--text-column',
+        help="Text column to use on CSV conversions; Default 'ReportText'",
+        type=str,
+        default='ReportText',
+    )
+    parser.add_argument(
+        '--output-json',
+        help="Output json for conversions"
+    )
+    parser.add_argument(
+        '--model-filename',
+        help="Model filename to load for conversion predictions"
+    )
+    parser.add_argument(
+        '--predict',
+        action='store_true',
+        help=(
+            "Enable predictions on "
+            "conversions; Works with "
+            "any `--convert` arg"
+        )
+    )
+    parser.add_argument(
+        '--train',
+        action='store_true',
+        help="Train a mediner model; Requires '--exported-jsons'"
+    )
+    parser.add_argument(
+        '--exported-jsons',
+        nargs='+',
+        help="Exported json files output from label-studio"
+    )
+    parser.add_argument(
+        '--load',
+        help="Test loading a mediner model file"
+    )
+    parser.add_argument(
+        '--k',
+        type=int,
+        default=None,
+        help="k for k-fold cross-validation"
+    )
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help="Turn on debug logging"
+    )
     return parser
 
 
@@ -44,17 +95,21 @@ def main() -> None:
             args.predict,
             args.model_filename
         )
-    if args.convert_jsons_to_label_studio:
+    elif args.convert_jsons_to_label_studio:
         commands.convert_jsons_to_label_studio(
             args.convert_jsons_to_label_studio,
             args.output_json,
             args.predict,
             args.model_filename
         )
-    if args.train and args.exported_jsons:
+    elif args.train and args.exported_jsons:
         commands.train(
             args.exported_jsons,
-            output_filename=None
+            output_filename=None,
+            k=args.k
         )
-    if args.load:
+    elif args.load:
         commands.load(args.load)
+    else:
+        logger.info("Couldn't understand args")
+        parser.print_help()

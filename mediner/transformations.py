@@ -107,3 +107,26 @@ def split_dev_train(
     index = int(len(annotations) * amount)
     dev, train = annotations[:index], annotations[index:]
     return dev, train
+
+
+def k_splits_dev_train(
+        annotations: list,
+        k: int) -> list[tuple]:
+    """k-split x input into k parts of (dev, train)
+
+    :return list:
+    """
+    if len(annotations) <= k:
+        raise ValueError(
+            f"Annotations must be larger than k; {len(annotations)}; {k}"
+        )
+    step = len(annotations) // k
+    splits = []
+    for start in range(0, len(annotations), step):
+        if len(splits) >= k:
+            continue
+        end = start + step
+        dev = annotations[start:end]
+        train = annotations[:start] + annotations[end:]
+        splits.append((dev, train))
+    return splits

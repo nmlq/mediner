@@ -201,49 +201,70 @@ def train(
         output_path: str = 'mediner_model',
         train_spacy_filename: str = 'train.spacy',
         dev_spacy_filename: str = 'dev.spacy',
-        config_filename: str = None) -> str:
+        config_filename: str = None,
+        k: int = None) -> str:
     """Train a NER from the source annotation filenames
+
+    if k is supplied run k-fold training.
 
     :returns str: path of trained model binary
     """
+    if k is not None and k <= 1:
+        raise ValueError(f"k must be greater than 1; {k}")
+
     if not config_filename:
         dirname = os.path.dirname(os.path.abspath(__file__))
         config_filename = f"{dirname}/config.cfg"
 
     logger.info(f"Training from {len(input_filenames)} filenames")
     tasks = transformations.files_to_tasks(input_filenames)
-    dev_tasks, train_tasks = transformations.split_dev_train(tasks)
-    logger.info(
-        f"Split; dev {len(dev_tasks)}, train {len(train_tasks)}"
-    )
-    dev_docbin = transformations.tasks_to_docbin(dev_tasks)
-    train_docbin = transformations.tasks_to_docbin(train_tasks)
-    dev_docbin.to_disk(dev_spacy_filename)
-    train_docbin.to_disk(train_spacy_filename)
-    model_choice = 'model-best'
-    spacy.cli.train.train(
-        config_filename,
-        output_path=output_path,
-        overrides={
-            "paths.train": train_spacy_filename,
-            "paths.dev": dev_spacy_filename
+
+    if k is None:
+        dev_tasks, train_tasks = transformations.split_dev_train(tasks)
+        splits = [(dev_tasks, train_tasks)]
+    else:
+        splits = transformations.k_splits_dev_train(tasks, k)
+
+    for split_index, split in enumerate(splits):
+        split_output_path = f"{output_path}/split_{split_index}"
+        dev_tasks, train_tasks = split
+        logger.info((
+            f"Split {split_index}; "
+            f"dev {len(dev_tasks)}, "
+            "train {len(train_tasks)}"
+        ))
+        dev_docbin = transformations.tasks_to_docbin(dev_tasks)
+        train_docbin = transformations.tasks_to_docbin(train_tasks)
+        dev_docbin.to_disk(dev_spacy_filename)
+        train_docbin.to_disk(train_spacy_filename)
+        model_choice = 'model-best'
+        spacy.cli.train.train(
+            config_filename,
+            output_path=split_output_path,
+            overrides={
+                "paths.train": train_spacy_filename,
+                "paths.dev": dev_spacy_filename
+            }
+        )
+        nlp = spacy.load(
+            "{}/{}".format(split_output_path, model_choice)
+        )
+        # https://spacy.io/usage/saving-loading#pipeline
+        serialized_model = {
+            'config': nlp.config.to_str(),
+            'nlp': nlp.to_bytes()
         }
-    )
-    nlp = spacy.load(
-        "{}/{}".format(output_path, model_choice)
-    )
-    # https://spacy.io/usage/saving-loading#pipeline
-    serialized_model = {
-        'config': nlp.config.to_str(),
-        'nlp': nlp.to_bytes()
-    }
-    now = datetime.datetime.now()
-    suffix = f"{now.year}-{now.month}-{now.day}-{now.timestamp()}"
-    if output_filename is None:
-        output_filename = f"mediner-model-{suffix}.pkl"
-    logger.info(f"Saving model; {output_filename}")
-    with open(output_filename, 'wb') as f:
-        pickle.dump(serialized_model, f)
+        now = datetime.datetime.now()
+
+        suffix = f"{now.year}-{now.month}-{now.day}-{now.timestamp()}"
+        if output_filename is None and k is not None:
+            output_filename = f"mediner-model-split-{split_index}-{suffix}.pkl"
+        if output_filename is None and k is None:
+            output_filename = f"mediner-model-{suffix}.pkl"
+
+        logger.info(f"Saving model; {output_filename}")
+        with open(output_filename, 'wb') as f:
+            pickle.dump(serialized_model, f)
     return output_filename
 
 
