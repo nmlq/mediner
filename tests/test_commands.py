@@ -91,7 +91,7 @@ def test_train_k_2(
         tmp_path,
         mock_label_studio_export_json_filename,
         test_config_filename):
-    """Test the train function
+    """Test the train function with k=2
     """
     temp_output_model_path = tmp_path / "temp.output.model.pkl"
     temp_output_path = str(tmp_path)
@@ -103,6 +103,27 @@ def test_train_k_2(
         output_path=temp_output_path,
         config_filename=test_config_filename,
         k=2
+    )
+    assert os.path.isfile(trained_model_output_filename)
+    assert trained_model_output_filename == temp_output_filename
+
+
+def test_train_hold_out_percentage_30(
+        tmp_path,
+        mock_label_studio_export_json_filename,
+        test_config_filename):
+    """Test the train function with percentage=0.3
+    """
+    temp_output_model_path = tmp_path / "temp.output.model.pkl"
+    temp_output_path = str(tmp_path)
+    temp_output_filename = str(temp_output_model_path)
+    assert not os.path.isfile(temp_output_filename)
+    trained_model_output_filename = commands.train(
+        input_filenames=[mock_label_studio_export_json_filename],
+        output_filename=temp_output_filename,
+        output_path=temp_output_path,
+        config_filename=test_config_filename,
+        percentage=0.3
     )
     assert os.path.isfile(trained_model_output_filename)
     assert trained_model_output_filename == temp_output_filename
