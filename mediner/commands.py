@@ -222,6 +222,7 @@ def train(
     if k is None:
         dev_tasks, train_tasks = transformations.split_dev_train(tasks)
         splits = [(dev_tasks, train_tasks)]
+        percentage_suffix = f"_{percentage}_percent"
     else:
         splits = transformations.k_splits_dev_train(tasks, k)
 
@@ -231,7 +232,7 @@ def train(
         logger.info((
             f"Split {split_index}; "
             f"dev {len(dev_tasks)}, "
-            "train {len(train_tasks)}"
+            f"train {len(train_tasks)}"
         ))
         dev_docbin = transformations.tasks_to_docbin(dev_tasks)
         train_docbin = transformations.tasks_to_docbin(train_tasks)
