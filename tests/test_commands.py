@@ -107,6 +107,7 @@ def test_train_k_2(
     assert os.path.isfile(trained_model_output_filename)
     assert trained_model_output_filename == temp_output_filename
 
+
 def test_train_hold_out_percentage_30(
         tmp_path,
         mock_label_studio_export_json_filename,

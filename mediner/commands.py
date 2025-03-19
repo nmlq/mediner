@@ -233,7 +233,10 @@ def train(
         splits = transformations.k_splits_dev_train(tasks, k)
 
     for split_index, split in enumerate(splits):
-        split_output_path = f"{output_path}/split_{split_index}{percentage_suffix}"
+        split_output_path = (
+            f"{output_path}/split_{split_index}"
+            f"{percentage_suffix}"
+        )
         dev_tasks, train_tasks = split
         logger.info((
             f"Split {split_index}; "
@@ -265,7 +268,10 @@ def train(
 
         suffix = f"{now.year}-{now.month}-{now.day}-{now.timestamp()}"
         if output_filename is None and k is not None:
-            output_filename = f"mediner-model-split-{split_index}{percentage_suffix}-{suffix}.pkl"
+            output_filename = (
+                f"mediner-model-split-{split_index}"
+                f"{percentage_suffix}-{suffix}.pkl"
+            )
         if output_filename is None and k is None:
             output_filename = f"mediner-model-{suffix}.pkl"
 
