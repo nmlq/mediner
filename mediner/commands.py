@@ -202,7 +202,8 @@ def train(
         train_spacy_filename: str = 'train.spacy',
         dev_spacy_filename: str = 'dev.spacy',
         config_filename: str = None,
-        k: int = None) -> str:
+        k: int = None,
+        percentage: float = None) -> str:
     """Train a NER from the source annotation filenames
 
     if k is supplied run k-fold training.
@@ -219,14 +220,20 @@ def train(
     logger.info(f"Training from {len(input_filenames)} filenames")
     tasks = transformations.files_to_tasks(input_filenames)
 
+    percentage_suffix = ""
     if k is None:
-        dev_tasks, train_tasks = transformations.split_dev_train(tasks)
+        percentage = percentage or 0.2
+        dev_tasks, train_tasks = transformations.split_dev_train(
+            tasks,
+            percentage=percentage
+        )
         splits = [(dev_tasks, train_tasks)]
+        percentage_suffix = "_{percentage}_percent"
     else:
         splits = transformations.k_splits_dev_train(tasks, k)
 
     for split_index, split in enumerate(splits):
-        split_output_path = f"{output_path}/split_{split_index}"
+        split_output_path = f"{output_path}/split_{split_index}{percentage_suffix}"
         dev_tasks, train_tasks = split
         logger.info((
             f"Split {split_index}; "
@@ -258,7 +265,7 @@ def train(
 
         suffix = f"{now.year}-{now.month}-{now.day}-{now.timestamp()}"
         if output_filename is None and k is not None:
-            output_filename = f"mediner-model-split-{split_index}-{suffix}.pkl"
+            output_filename = f"mediner-model-split-{split_index}{percentage_suffix}-{suffix}.pkl"
         if output_filename is None and k is None:
             output_filename = f"mediner-model-{suffix}.pkl"
 

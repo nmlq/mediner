@@ -99,12 +99,18 @@ def tasks_to_docbin(tasks: list[types.Task]) -> DocBin:
 
 def split_dev_train(
         annotations: list,
-        amount: float = 0.2) -> tuple:
+        percentage: float) -> tuple:
     """Split the annotations into a dev/train tuple.
+
+    percentage is dev hold out quantity of total annotations.
 
     :return tuple: (dev, train) split
     """
-    index = int(len(annotations) * amount)
+    logger.info((
+        f"Splitting {percentage} percent of "
+        f"data for dev. Remaining {1.0-percentage} for train."
+    ))
+    index = int(len(annotations) * percentage)
     dev, train = annotations[:index], annotations[index:]
     return dev, train
 
