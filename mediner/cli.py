@@ -68,6 +68,12 @@ def get_parser() -> argparse.ArgumentParser:
         help="k for k-fold cross-validation"
     )
     parser.add_argument(
+        '--hold-out-percentage',
+        type=float,
+        default=0.2,
+        help="percentage for hold-fold validation"
+    )
+    parser.add_argument(
         '--debug',
         action='store_true',
         help="Turn on debug logging"
@@ -106,7 +112,8 @@ def main() -> None:
         commands.train(
             args.exported_jsons,
             output_filename=None,
-            k=args.k
+            k=args.k,
+            percentage=args.hold_out_percentage
         )
     elif args.load:
         commands.load(args.load)
