@@ -6,6 +6,7 @@ import pickle
 import datetime
 import tqdm
 import os
+import random
 
 from uuid import uuid4
 from mediner import transformations
@@ -203,7 +204,8 @@ def train(
         dev_spacy_filename: str = 'dev.spacy',
         config_filename: str = None,
         k: int = None,
-        percentage: float = None) -> str:
+        percentage: float = None,
+        shuffle: bool = False) -> str:
     """Train a NER from the source annotation filenames
 
     if k is supplied run k-fold training.
@@ -219,6 +221,9 @@ def train(
 
     logger.info(f"Training from {len(input_filenames)} filenames")
     tasks = transformations.files_to_tasks(input_filenames)
+    if shuffle:
+        logger.info(f"Shuffling {len(tasks)} tasks pre-training")
+        random.shuffle(tasks)
 
     percentage_suffix = ""
     if k is None:
