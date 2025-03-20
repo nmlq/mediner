@@ -78,6 +78,11 @@ def get_parser() -> argparse.ArgumentParser:
         action='store_true',
         help="Turn on debug logging"
     )
+    parser.add_argument(
+        '--shuffle',
+        action='store_true',
+        help="Suffle tasks"
+    )
     return parser
 
 
@@ -113,7 +118,8 @@ def main() -> None:
             args.exported_jsons,
             output_filename=None,
             k=args.k,
-            percentage=args.hold_out_percentage
+            percentage=args.hold_out_percentage,
+            shuffle=args.shuffle
         )
     elif args.load:
         commands.load(args.load)

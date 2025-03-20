@@ -102,7 +102,8 @@ def test_train_k_2(
         output_filename=temp_output_filename,
         output_path=temp_output_path,
         config_filename=test_config_filename,
-        k=2
+        k=2,
+        shuffle=True
     )
     assert os.path.isfile(trained_model_output_filename)
     assert trained_model_output_filename == temp_output_filename
@@ -123,7 +124,8 @@ def test_train_hold_out_percentage_30(
         output_filename=temp_output_filename,
         output_path=temp_output_path,
         config_filename=test_config_filename,
-        percentage=0.3
+        percentage=0.3,
+        shuffle=True
     )
     assert os.path.isfile(trained_model_output_filename)
     assert trained_model_output_filename == temp_output_filename
