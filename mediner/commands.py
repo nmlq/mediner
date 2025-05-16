@@ -58,38 +58,46 @@ def convert_csv_to_label_studio(
     ]
 
     if predict and model_filename:
+        updated_tasks = []
         logger.info(
             f"Predictions enabled, predicting on all inputs {len(tasks)}"
         )
         nlp = load(model_filename)
         total_ents = 0
-        for task in tqdm.tqdm(tasks, total=len(tasks)):
+        for i, task in tqdm.tqdm(enumerate(tasks), total=len(tasks)):
             doc = nlp(task.data.text)
             total_ents += len(doc.ents)
-            task.predictions = [
+            predictions = [
                 types.Prediction(
                     model_version=model_filename,
                     score=1.0,
+                    task=i,
                     result=[
                         types.EntityResult(
                             id=uuid4().hex,
-                            value=[
-                                types.SpanValue(
-                                    start=ent.start_char,
-                                    end=ent.end_char,
-                                    score=1.0,
-                                    text=ent.text,
-                                    labels=[ent.label_]
-                                )
-                            ]
+                            value=types.SpanValue(
+                                start=ent.start_char,
+                                end=ent.end_char,
+                                score=1.0,
+                                text=ent.text,
+                                labels=[ent.label_]
+                            )
                         )
                     ]
                 )
                 for ent in doc.ents
             ]
+            updated_tasks.append(
+                types.Task(
+                    data=task.data,
+                    annotations=task.annotations,
+                    predictions=predictions,
+                )
+            )
         logger.info(
             f"Added total {total_ents} entities to {len(tasks)} tasks"
         )
+        tasks = updated_tasks
 
     logger.info(f"Created {len(tasks)} tasks for label studio")
 
