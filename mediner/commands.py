@@ -81,7 +81,10 @@ def convert_csv_to_label_studio(
                                 score=1.0,
                                 text=ent.text,
                                 labels=[ent.label_]
-                            )
+                            ),
+                            from_name="label",
+                            to_name="text",
+                            type="labels",
                         )
                     ]
                 )
@@ -90,7 +93,7 @@ def convert_csv_to_label_studio(
             updated_tasks.append(
                 types.Task(
                     data=task.data,
-                    annotations=task.annotations,
+                    annotations=task.annotations or [],
                     predictions=predictions,
                 )
             )
