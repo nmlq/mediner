@@ -39,6 +39,10 @@ def get_parser() -> argparse.ArgumentParser:
         help="Model filename to load for conversion predictions"
     )
     parser.add_argument(
+        '--cfg-filename',
+        help="CFG filename to use on train"
+    )
+    parser.add_argument(
         '--predict',
         action='store_true',
         help=(
@@ -119,7 +123,8 @@ def main() -> None:
             output_filename=None,
             k=args.k,
             percentage=args.hold_out_percentage,
-            shuffle=args.shuffle
+            shuffle=args.shuffle,
+            config_filename=args.cfg_filename
         )
     elif args.load:
         commands.load(args.load)

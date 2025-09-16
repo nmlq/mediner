@@ -230,6 +230,7 @@ def train(
         dirname = os.path.dirname(os.path.abspath(__file__))
         config_filename = f"{dirname}/config.cfg"
 
+    logger.info(f"Using config file; {config_filename}")
     logger.info(f"Training from {len(input_filenames)} filenames")
     tasks = transformations.files_to_tasks(input_filenames)
     if shuffle:
