@@ -16,6 +16,61 @@ from mediner import types
 logger = logging.getLogger(__name__)
 
 
+def _helper_predict_on_tasks(
+        tasks: list[types.Task],
+        model_filename: str) -> list[types.Task]:
+    """Predict on tasks and return a new list.
+
+    :param list tasks: Task objects to read text from
+    :param str model_filename: filename to load the model from
+
+    :return list: List of new tasks with predictions.
+    """
+    updated_tasks_with_predictions = []
+    logger.info(
+        f"Predicting on {len(tasks)} inputs"
+    )
+    nlp = load(model_filename)
+    total_ents = 0
+    for i, task in tqdm.tqdm(enumerate(tasks), total=len(tasks)):
+        doc = nlp(task.data.text)
+        total_ents += len(doc.ents)
+        predictions = [
+            types.Prediction(
+                model_version=model_filename,
+                score=1.0,
+                task=i,
+                result=[
+                    types.EntityResult(
+                        id=uuid4().hex,
+                        value=types.SpanValue(
+                            start=ent.start_char,
+                            end=ent.end_char,
+                            score=1.0,
+                            text=ent.text,
+                            labels=[ent.label_]
+                        ),
+                        from_name="label",
+                        to_name="text",
+                        type="labels",
+                    )
+                    for ent in doc.ents
+                ]
+            )
+        ]
+        updated_tasks_with_predictions.append(
+            types.Task(
+                data=task.data,
+                annotations=task.annotations or [],
+                predictions=predictions,
+            )
+        )
+    logger.info(
+        f"Added total {total_ents} entities to {len(tasks)} tasks"
+    )
+    return updated_tasks_with_predictions
+
+
 def convert_csv_to_label_studio(
         input_filename: str,
         text_column: str,
@@ -58,49 +113,8 @@ def convert_csv_to_label_studio(
     ]
 
     if predict and model_filename:
-        updated_tasks = []
-        logger.info(
-            f"Predictions enabled, predicting on all inputs {len(tasks)}"
-        )
-        nlp = load(model_filename)
-        total_ents = 0
-        for i, task in tqdm.tqdm(enumerate(tasks), total=len(tasks)):
-            doc = nlp(task.data.text)
-            total_ents += len(doc.ents)
-            predictions = [
-                types.Prediction(
-                    model_version=model_filename,
-                    score=1.0,
-                    task=i,
-                    result=[
-                        types.EntityResult(
-                            id=uuid4().hex,
-                            value=types.SpanValue(
-                                start=ent.start_char,
-                                end=ent.end_char,
-                                score=1.0,
-                                text=ent.text,
-                                labels=[ent.label_]
-                            ),
-                            from_name="label",
-                            to_name="text",
-                            type="labels",
-                        )
-                    ]
-                )
-                for ent in doc.ents
-            ]
-            updated_tasks.append(
-                types.Task(
-                    data=task.data,
-                    annotations=task.annotations or [],
-                    predictions=predictions,
-                )
-            )
-        logger.info(
-            f"Added total {total_ents} entities to {len(tasks)} tasks"
-        )
-        tasks = updated_tasks
+        logger.info("Predictions enabled")
+        tasks = _helper_predict_on_tasks(tasks, model_filename)
 
     logger.info(f"Created {len(tasks)} tasks for label studio")
 
@@ -149,49 +163,8 @@ def convert_jsons_to_label_studio(
     logger.info(f"Gathered {len(tasks)} tasks from input files")
 
     if predict and model_filename:
-        updated_tasks = []
-        logger.info(
-            f"Predictions enabled, predicting on all inputs {len(tasks)}"
-        )
-        nlp = load(model_filename)
-        total_ents = 0
-        for i, task in tqdm.tqdm(enumerate(tasks), total=len(tasks)):
-            doc = nlp(task.data.text)
-            total_ents += len(doc.ents)
-            predictions = [
-                types.Prediction(
-                    model_version=model_filename,
-                    score=1.0,
-                    task=i,
-                    result=[
-                        types.EntityResult(
-                            id=uuid4().hex,
-                            value=types.SpanValue(
-                                start=ent.start_char,
-                                end=ent.end_char,
-                                score=1.0,
-                                text=ent.text,
-                                labels=[ent.label_]
-                            ),
-                            from_name="label",
-                            to_name="text",
-                            type="labels",
-                        )
-                        for ent in doc.ents
-                    ]
-                )
-            ]
-            updated_tasks.append(
-                types.Task(
-                    data=task.data,
-                    annotations=task.annotations,
-                    predictions=predictions,
-                )
-            )
-        logger.info(
-            f"Added total {total_ents} entities to {len(tasks)} tasks"
-        )
-        tasks = updated_tasks
+        logger.info("Predictions enabled")
+        tasks = _helper_predict_on_tasks(tasks, model_filename)
 
     logger.info(f"Created {len(tasks)} tasks for label studio")
 
