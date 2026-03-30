@@ -11,6 +11,8 @@ def get_parser() -> argparse.ArgumentParser:
         prog='mediner',
         description='Medical NER CLI Tool'
     )
+    #TODO: add a new command for adding predictions to a csv
+    #   >>> --add-entities-to-csv (requires --model-filename and --text-column - implicit '{text_column}_entities' column?)
     parser.add_argument(
         '--convert-csv-to-label-studio',
         help="Convert CSV to importable label-studio format"

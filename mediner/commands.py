@@ -5,6 +5,7 @@ import spacy
 import pickle
 import datetime
 import tqdm
+import csv
 import os
 import random
 
@@ -71,6 +72,72 @@ def _helper_predict_on_tasks(
     return updated_tasks_with_predictions
 
 
+def add_entities_to_csv(
+        input_filename: str,
+        text_column: str,
+        output_filename: str,
+        model_filename: str
+    ) -> int:
+    """Add the entities to the csv.
+
+    Read the CSV from the input and use the text_column to find the text
+    Apply the model from the filename to each text row
+    Write out each line to a new text file.
+
+    Memory efficient, one line at a time.
+
+    :return int: amount of rows written with entities in them
+    """
+    logger.info(f"Adding entities; Reading '{input_filename}' and writing out to '{output_filename}'")
+    # Load the model
+    nlp = load(model_filename)
+
+    # Total tally for readability
+    total = 0
+
+    # open the input file to read the data from one line at a time
+    with open(input_filename, 'r') as inp_f:
+        reader = csv.reader(inp_f, delimiter=',')
+        header = next(reader)
+        # check for the text column, if it isnt there fail
+        text_index = header.index(text_column)
+
+        # No failiures, Open up the file now for writing
+        with open(output_filename, 'w') as out_f:
+            writer = csv.writer(out_f, quoting=csv.QUOTE_ALL)
+
+            # Make a new header with the old one and an additional column for entities
+            entities_column_name = f"{text_column}_entities"
+            new_header = header + [entities_column_name]
+            writer.writerow(new_header)
+            # For all the additional data lines
+            for column_data in tqdm.tqdm(reader):
+                text = column_data[text_index]
+                # make the doc to get the ents
+                doc = nlp(text)
+                # directly dump the entities to a json 
+                # readable format and add to the file
+                entities = [
+                    dict(
+                        start_char=ent.start_char,
+                        end_char=ent.end_char,
+                        text=ent.text,
+                        label=ent.label_
+                    )
+                    for ent in doc.ents
+                ]
+                entities_json = json.dumps(entities)
+                new_column_data = column_data + [entities_json]
+                writer.writerow(new_column_data)
+                if entities:
+                    total += 1
+    logger.info(f"Wrote {total} lines with entitiy predictions for column '{text_column}'")
+    return total
+            
+                
+
+
+
 def convert_csv_to_label_studio(
         input_filename: str,
         text_column: str,
@@ -102,15 +169,7 @@ def convert_csv_to_label_studio(
     logger.info(f"Converting {len(df)} rows to label studio format")
     logger.debug(df)
 
-    tasks = [
-        types.Task(
-            data=types.Data(
-                text=row[text_column]
-            )
-        )
-        for _, row in df.fillna('').iterrows()
-        if row[text_column]
-    ]
+    tasks = transformations.df_to_tasks(df, text_column)
 
     if predict and model_filename:
         logger.info("Predictions enabled")
@@ -135,7 +194,7 @@ def convert_jsons_to_label_studio(
         output_filename: str = None,
         predict: bool = False,
         model_filename: str = None) -> list[types.Task]:
-    """Convert a json label studio files to a single label studio format file.
+    """Convert a json label studio files (serialized tasks) to a single label studio format file.
     Can add predicitons if predict is True and a model filename present.
 
     Output file should be .json format for importing into label studio
@@ -272,6 +331,10 @@ def train(
 
 
 def load(filename: str):
+    """Load the model and return it.
+    
+    :return nlp:
+    """
     logger.info(f"Loading model from {filename}")
     with open(filename, 'rb') as f:
         serialized_model = pickle.load(f)

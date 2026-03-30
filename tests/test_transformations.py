@@ -35,6 +35,18 @@ def test_files_to_tasks(mock_label_studio_export_json_filename):
     assert tasks and all([isinstance(task, types.Task) for task in tasks])
 
 
+def test_df_to_tasks(mock_input_df):
+    """Test making tasks from a df:
+
+    :return None:
+    :raises AssertionError:
+    """
+    text_column = "ReportText"
+    tasks = transformations.df_to_tasks(mock_input_df, text_column)
+    assert len(tasks) == len(mock_input_df)
+    assert set(mock_input_df[text_column].to_list()) == set([t.data.text for t in tasks])
+
+
 def test_tasks_to_docbin(mock_label_studio_export_json_filename):
     """Test making a md5 hash string from an empty input
 

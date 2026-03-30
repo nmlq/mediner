@@ -129,3 +129,30 @@ def test_train_hold_out_percentage_30(
     )
     assert os.path.isfile(trained_model_output_filename)
     assert trained_model_output_filename == temp_output_filename
+
+
+def test_add_entities_to_csv(
+        mock_input_csv,
+        tmp_path,
+        mock_label_studio_export_json_filename,
+        test_config_filename):
+    """Test adding entities with model"""
+
+    # get a "trained" model filename, mock trained model
+    temp_output_model_path = tmp_path / "temp.output.model.pkl"
+    temp_output_path = str(tmp_path)
+    temp_output_filename = str(temp_output_model_path)
+    trained_model_output_filename = commands.train(
+        input_filenames=[mock_label_studio_export_json_filename],
+        output_filename=temp_output_filename,
+        output_path=temp_output_path,
+        config_filename=test_config_filename
+    )
+    temp_output_csv_path = tmp_path / "temp.output.entities.csv"
+    total_entities_rows = commands.add_entities_to_csv(
+        input_filename=mock_input_csv,
+        text_column="ReportText",
+        output_filename=str(temp_output_csv_path),
+        model_filename=trained_model_output_filename
+    )
+    assert total_entities_rows > 0

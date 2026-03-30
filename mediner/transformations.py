@@ -2,6 +2,7 @@ import hashlib
 import json
 import logging
 import spacy
+import pandas
 from mediner import types
 from spacy.tokens import DocBin
 
@@ -17,6 +18,28 @@ def text_to_md5(text: str) -> str:
     md5 = hashlib.md5()
     md5.update(text.encode())
     return md5.hexdigest()
+
+
+def df_to_tasks(
+        df: pandas.DataFrame,
+        text_column: str) -> list[types.Task]:
+    """Take a dataframe and a text column name, and output tasks.
+
+    Use the text column name and read that from the each row.
+    Make tasks with that text field.
+
+    :return list: list of task objects
+    """
+    tasks = [
+        types.Task(
+            data=types.Data(
+                text=row[text_column]
+            )
+        )
+        for _, row in df.fillna('').iterrows()
+        if row[text_column]
+    ]
+    return tasks
 
 
 def files_to_tasks(filenames: list[str]) -> list[dict]:
