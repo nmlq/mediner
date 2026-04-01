@@ -75,8 +75,8 @@ def _helper_predict_on_tasks(
 def add_entities_to_csv(
         input_filename: str,
         text_column: str,
-        output_filename: str,
-        model_filename: str
+        model_filename: str,
+        output_filename: str = None
     ) -> int:
     """Add the entities to the csv.
 
@@ -88,7 +88,16 @@ def add_entities_to_csv(
 
     :return int: amount of rows written with entities in them
     """
-    logger.info(f"Adding entities; Reading '{input_filename}' and writing out to '{output_filename}'")
+    logger.info(f"Adding entities to CSV.")
+    variables = [('input_filename', input_filename) ,('text_column', text_column), ('model_filename', model_filename)]
+    for variable_name, variable in variables:
+        if not variable:
+            raise ValueError(f"{variable_name}; is empty '{variable}', aborting.")
+
+    entities_column_name = f"{text_column}_entities"
+    if not output_filename:
+        output_filename = input_filename.replace('.csv', f'{entities_column_name}.csv')
+    logger.info(f"Reading '{input_filename}' and writing out to '{output_filename}'")
     # Load the model
     nlp = load(model_filename)
 
@@ -107,7 +116,6 @@ def add_entities_to_csv(
             writer = csv.writer(out_f, quoting=csv.QUOTE_ALL)
 
             # Make a new header with the old one and an additional column for entities
-            entities_column_name = f"{text_column}_entities"
             new_header = header + [entities_column_name]
             writer.writerow(new_header)
             # For all the additional data lines
@@ -133,8 +141,6 @@ def add_entities_to_csv(
                     total += 1
     logger.info(f"Wrote {total} lines with entitiy predictions for column '{text_column}'")
     return total
-            
-                
 
 
 
