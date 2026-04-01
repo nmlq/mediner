@@ -12,10 +12,6 @@ def get_parser() -> argparse.ArgumentParser:
         description='Medical NER CLI Tool'
     )
     parser.add_argument(
-        '--add-entities-to-csv',
-        help="Add entities to CSV. Requires --text-column and --model-filename"
-    )
-    parser.add_argument(
         '--convert-csv-to-label-studio',
         help="Convert CSV to importable label-studio format"
     )
@@ -121,13 +117,6 @@ def main() -> None:
             args.predict,
             args.model_filename
         )
-    elif args.add_entities_to_csv:
-        commands.add_entities_to_csv(
-            args.add_entities_to_csv,
-            args.text_column,
-            args.model_filename
-        )
-
     elif args.train and args.exported_jsons:
         commands.train(
             args.exported_jsons,

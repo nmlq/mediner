@@ -2,7 +2,6 @@ import pytest
 import pandas
 import os
 import json
-import spacy
 
 
 @pytest.fixture(scope="session")
@@ -54,30 +53,3 @@ def test_config_filename():
     dirname = os.path.dirname(os.path.abspath(__file__))
     test_config_filename = f"{dirname}/tests_config.cfg"
     return test_config_filename
-
-class MockEntity:
-    def __init__(self, t, l, s=0, e=0):
-        self.text = t
-        self.label_ = l
-        self.start_char = s
-        self.end_char = e
-
-class MockDoc:
-    def __init__(self, t, ents):
-        self.text = t
-        self.ents = ents
-
-
-@pytest.fixture(scope="session")
-def mock_doc_with_entities():
-    return MockDoc(
-        "Mock Document with Entities for Testing",
-        ents = [MockEntity("5", "PIRADS"), MockEntity("3.27", "PSA Density")]
-    )
-
-
-@pytest.fixture(scope="session")
-def mock_nlp(mock_doc_with_entities):
-    def always_return_mockdoc_nlp(*args, **kwargs):
-        return mock_doc_with_entities
-    return always_return_mockdoc_nlp

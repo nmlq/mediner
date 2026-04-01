@@ -129,24 +129,3 @@ def test_train_hold_out_percentage_30(
     )
     assert os.path.isfile(trained_model_output_filename)
     assert trained_model_output_filename == temp_output_filename
-
-
-def test_add_entities_to_csv(
-        mock_input_csv,
-        tmp_path,
-        mock_nlp,
-        monkeypatch):
-    """Test adding entities with model"""
-    # Mock the trained model with fake repeatable outputs
-    monkeypatch.setattr(commands, 'load', lambda fn: mock_nlp)
-    temp_output_csv_path = tmp_path / "temp.output.entities.csv"
-    temp_output_csv_path_string = str(temp_output_csv_path)
-    assert not os.path.isfile(temp_output_csv_path_string)
-    total_entities_rows = commands.add_entities_to_csv(
-        input_filename=mock_input_csv,
-        text_column="ReportText",
-        model_filename="inexistent.model.file.pkl", 
-        output_filename=temp_output_csv_path_string,
-    )
-    assert os.path.isfile(temp_output_csv_path_string)
-    assert total_entities_rows == len(mock_nlp('').ents)
