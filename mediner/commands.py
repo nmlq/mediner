@@ -96,7 +96,7 @@ def add_entities_to_csv(
 
     entities_column_name = f"{text_column}_entities"
     if not output_filename:
-        output_filename = input_filename.replace('.csv', f'{entities_column_name}.csv')
+        output_filename = input_filename.replace('.csv', f'_{entities_column_name}.csv')
     logger.info(f"Reading '{input_filename}' and writing out to '{output_filename}'")
     # Load the model
     nlp = load(model_filename)
