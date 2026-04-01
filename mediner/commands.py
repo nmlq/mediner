@@ -5,6 +5,7 @@ import spacy
 import pickle
 import datetime
 import tqdm
+import csv
 import os
 import random
 
@@ -14,6 +15,133 @@ from mediner import types
 
 
 logger = logging.getLogger(__name__)
+
+
+def _helper_predict_on_tasks(
+        tasks: list[types.Task],
+        model_filename: str) -> list[types.Task]:
+    """Predict on tasks and return a new list.
+
+    :param list tasks: Task objects to read text from
+    :param str model_filename: filename to load the model from
+
+    :return list: List of new tasks with predictions.
+    """
+    updated_tasks_with_predictions = []
+    logger.info(
+        f"Predicting on {len(tasks)} inputs"
+    )
+    nlp = load(model_filename)
+    total_ents = 0
+    for i, task in tqdm.tqdm(enumerate(tasks), total=len(tasks)):
+        doc = nlp(task.data.text)
+        total_ents += len(doc.ents)
+        predictions = [
+            types.Prediction(
+                model_version=model_filename,
+                score=1.0,
+                task=i,
+                result=[
+                    types.EntityResult(
+                        id=uuid4().hex,
+                        value=types.SpanValue(
+                            start=ent.start_char,
+                            end=ent.end_char,
+                            score=1.0,
+                            text=ent.text,
+                            labels=[ent.label_]
+                        ),
+                        from_name="label",
+                        to_name="text",
+                        type="labels",
+                    )
+                    for ent in doc.ents
+                ]
+            )
+        ]
+        updated_tasks_with_predictions.append(
+            types.Task(
+                data=task.data,
+                annotations=task.annotations or [],
+                predictions=predictions,
+            )
+        )
+    logger.info(
+        f"Added total {total_ents} entities to {len(tasks)} tasks"
+    )
+    return updated_tasks_with_predictions
+
+
+def add_entities_to_csv(
+        input_filename: str,
+        text_column: str,
+        model_filename: str,
+        output_filename: str = None
+    ) -> int:
+    """Add the entities to the csv.
+
+    Read the CSV from the input and use the text_column to find the text
+    Apply the model from the filename to each text row
+    Write out each line to a new text file.
+
+    Memory efficient, one line at a time.
+
+    :return int: amount of rows written with entities in them
+    """
+    logger.info(f"Adding entities to CSV.")
+    variables = [('input_filename', input_filename) ,('text_column', text_column), ('model_filename', model_filename)]
+    for variable_name, variable in variables:
+        if not variable:
+            raise ValueError(f"{variable_name}; is empty '{variable}', aborting.")
+
+    entities_column_name = f"{text_column}_entities"
+    if not output_filename:
+        output_filename = input_filename.replace('.csv', f'{entities_column_name}.csv')
+    logger.info(f"Reading '{input_filename}' and writing out to '{output_filename}'")
+    # Load the model
+    nlp = load(model_filename)
+
+    # Total tally for readability
+    total = 0
+
+    # open the input file to read the data from one line at a time
+    with open(input_filename, 'r') as inp_f:
+        reader = csv.reader(inp_f, delimiter=',')
+        header = next(reader)
+        # check for the text column, if it isnt there fail
+        text_index = header.index(text_column)
+
+        # No failiures, Open up the file now for writing
+        with open(output_filename, 'w') as out_f:
+            writer = csv.writer(out_f, quoting=csv.QUOTE_ALL)
+
+            # Make a new header with the old one and an additional column for entities
+            new_header = header + [entities_column_name]
+            writer.writerow(new_header)
+            # For all the additional data lines
+            for column_data in tqdm.tqdm(reader):
+                text = column_data[text_index]
+                # make the doc to get the ents
+                doc = nlp(text)
+                # directly dump the entities to a json 
+                # readable format and add to the file
+                entities = [
+                    dict(
+                        start_char=ent.start_char,
+                        end_char=ent.end_char,
+                        text=ent.text,
+                        label=ent.label_
+                    )
+                    for ent in doc.ents
+                ]
+                entities_json = json.dumps(entities)
+                new_column_data = column_data + [entities_json]
+                writer.writerow(new_column_data)
+                if entities:
+                    total += 1
+    logger.info(f"Wrote {total} lines with entitiy predictions for column '{text_column}'")
+    return total
+
 
 
 def convert_csv_to_label_studio(
@@ -47,60 +175,11 @@ def convert_csv_to_label_studio(
     logger.info(f"Converting {len(df)} rows to label studio format")
     logger.debug(df)
 
-    tasks = [
-        types.Task(
-            data=types.Data(
-                text=row[text_column]
-            )
-        )
-        for _, row in df.fillna('').iterrows()
-        if row[text_column]
-    ]
+    tasks = transformations.df_to_tasks(df, text_column)
 
     if predict and model_filename:
-        updated_tasks = []
-        logger.info(
-            f"Predictions enabled, predicting on all inputs {len(tasks)}"
-        )
-        nlp = load(model_filename)
-        total_ents = 0
-        for i, task in tqdm.tqdm(enumerate(tasks), total=len(tasks)):
-            doc = nlp(task.data.text)
-            total_ents += len(doc.ents)
-            predictions = [
-                types.Prediction(
-                    model_version=model_filename,
-                    score=1.0,
-                    task=i,
-                    result=[
-                        types.EntityResult(
-                            id=uuid4().hex,
-                            value=types.SpanValue(
-                                start=ent.start_char,
-                                end=ent.end_char,
-                                score=1.0,
-                                text=ent.text,
-                                labels=[ent.label_]
-                            ),
-                            from_name="label",
-                            to_name="text",
-                            type="labels",
-                        )
-                    ]
-                )
-                for ent in doc.ents
-            ]
-            updated_tasks.append(
-                types.Task(
-                    data=task.data,
-                    annotations=task.annotations or [],
-                    predictions=predictions,
-                )
-            )
-        logger.info(
-            f"Added total {total_ents} entities to {len(tasks)} tasks"
-        )
-        tasks = updated_tasks
+        logger.info("Predictions enabled")
+        tasks = _helper_predict_on_tasks(tasks, model_filename)
 
     logger.info(f"Created {len(tasks)} tasks for label studio")
 
@@ -121,7 +200,7 @@ def convert_jsons_to_label_studio(
         output_filename: str = None,
         predict: bool = False,
         model_filename: str = None) -> list[types.Task]:
-    """Convert a json label studio files to a single label studio format file.
+    """Convert a json label studio files (serialized tasks) to a single label studio format file.
     Can add predicitons if predict is True and a model filename present.
 
     Output file should be .json format for importing into label studio
@@ -149,49 +228,8 @@ def convert_jsons_to_label_studio(
     logger.info(f"Gathered {len(tasks)} tasks from input files")
 
     if predict and model_filename:
-        updated_tasks = []
-        logger.info(
-            f"Predictions enabled, predicting on all inputs {len(tasks)}"
-        )
-        nlp = load(model_filename)
-        total_ents = 0
-        for i, task in tqdm.tqdm(enumerate(tasks), total=len(tasks)):
-            doc = nlp(task.data.text)
-            total_ents += len(doc.ents)
-            predictions = [
-                types.Prediction(
-                    model_version=model_filename,
-                    score=1.0,
-                    task=i,
-                    result=[
-                        types.EntityResult(
-                            id=uuid4().hex,
-                            value=types.SpanValue(
-                                start=ent.start_char,
-                                end=ent.end_char,
-                                score=1.0,
-                                text=ent.text,
-                                labels=[ent.label_]
-                            ),
-                            from_name="label",
-                            to_name="text",
-                            type="labels",
-                        )
-                        for ent in doc.ents
-                    ]
-                )
-            ]
-            updated_tasks.append(
-                types.Task(
-                    data=task.data,
-                    annotations=task.annotations,
-                    predictions=predictions,
-                )
-            )
-        logger.info(
-            f"Added total {total_ents} entities to {len(tasks)} tasks"
-        )
-        tasks = updated_tasks
+        logger.info("Predictions enabled")
+        tasks = _helper_predict_on_tasks(tasks, model_filename)
 
     logger.info(f"Created {len(tasks)} tasks for label studio")
 
@@ -299,6 +337,10 @@ def train(
 
 
 def load(filename: str):
+    """Load the model and return it.
+    
+    :return nlp:
+    """
     logger.info(f"Loading model from {filename}")
     with open(filename, 'rb') as f:
         serialized_model = pickle.load(f)
