@@ -12,9 +12,3 @@ COPY . /app
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir .
-
-# Copy the entrypoint script
-COPY entrypoint.sh /app/
-
-# Set the entrypoint to the script
-ENTRYPOINT ["/app/entrypoint.sh"]
