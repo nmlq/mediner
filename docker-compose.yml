@@ -7,10 +7,10 @@ services:
     build: .
     volumes:
       - ./:/app/
-    command: mediner --train --exported-jsons ${TRAIN_JSON} --model-filename ${MODEL_FILE} --debug
+    command: mediner --train --exported-jsons ${INPUT_JSON} --debug
 
   predict:
     build: .
     volumes:
       - ./:/app/
-    command: mediner --predict --model-filename ${MODEL_FILE} --debug
+    command: mediner --predict --convert-jsons-to-label-studio ${INPUT_JSON} --output-json ${OUTPUT_JSON} --model-filename ${MODEL_FILE} --debug
