@@ -8,12 +8,20 @@ __pycache__
 # Flat files
 *.json
 *.csv
-*.spacy
-*.pkl
 
 # folders
 mediner_model/
+data/
+
+# temp files
 .DS_Store
-.ipynb_checkpoints
+
+# notebook files
 *ipynb
+.ipynb_checkpoints
+
+# binaries
 *tar.gz
+*.spacy
+*.pkl
+

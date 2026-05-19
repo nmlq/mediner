@@ -2,7 +2,7 @@ pandas==2.2.3
 pytest==8.3.4
 flake8==7.1.1
 tqdm==4.67.1
-spacy==3.8.4
+spacy==3.8.5
 en_core_web_lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0-py3-none-any.whl
 label-studio==1.15.0
 label-studio-sdk==1.0.8
