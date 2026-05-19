@@ -1,0 +1,16 @@
+services:
+  test:
+    build: .
+    command: pytest
+
+  train:
+    build: .
+    volumes:
+      - ./:/app/
+    command: mediner --train --exported-jsons ${INPUT_JSON} --debug
+
+  predict:
+    build: .
+    volumes:
+      - ./:/app/
+    command: mediner --predict --convert-jsons-to-label-studio ${INPUT_JSON} --output-json ${OUTPUT_JSON} --model-filename ${MODEL_FILE} --debug
