@@ -34,10 +34,10 @@ jobs:
         run: pip install shiv
 
       - name: Build pyz
-        run: shiv -c mycli -o mycli-${{ matrix.os_name }}-${{ github.ref_name }}.pyz --python "${{ matrix.python_path }}" .
+        run: shiv -c mediner -o mediner-${{ matrix.os_name }}-${{ github.ref_name }}.pyz --python "${{ matrix.python_path }}" .
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: mycli-${{ matrix.os_name }}-${{ github.ref_name }}.pyz
+          files: mediner-${{ matrix.os_name }}-${{ github.ref_name }}.pyz
           generate_release_notes: true
