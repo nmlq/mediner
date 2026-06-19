@@ -9,7 +9,7 @@ def read_requirements(filename: str):
 
 setuptools.setup(
     name="mediner",
-    version='0.0.1',
+    version='0.0.2',
     description="Medical NER",
     long_description="Named Entity Recognition for the VA Hospital",
     author="Nathan McCoy",

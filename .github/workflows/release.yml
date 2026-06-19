@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            os_name: linux
+            python_path: "/usr/bin/env python3.10"
+          - os: macos-latest
+            os_name: macos
+            python_path: "/usr/bin/env python3.10"
+          - os: windows-latest
+            os_name: windows
+            python_path: "py -3.10"
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install shiv
+        run: pip install shiv
+
+      - name: Build pyz
+        run: shiv -c mycli -o mycli-${{ matrix.os_name }}-${{ github.ref_name }}.pyz --python "${{ matrix.python_path }}" .
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mycli-${{ matrix.os_name }}-${{ github.ref_name }}.pyz
+          generate_release_notes: true
