@@ -9,14 +9,14 @@ def read_requirements(filename: str):
 
 setuptools.setup(
     name="mediner",
-    version='0.0.1',
+    version='0.0.2',
     description="Medical NER",
     long_description="Named Entity Recognition for the VA Hospital",
     author="Nathan McCoy",
     author_email="noreply@va.gov",
     maintainer="Nathan McCoy",
     maintainer_email="noreply@va.gov",
-    python_requires='>=3.10',
+    python_requires='>=3.10, <3.11',
     install_requires=read_requirements('requirements.txt'),
     packages=setuptools.find_packages(),
     include_package_data=True,

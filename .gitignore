@@ -25,3 +25,6 @@ data/
 *.spacy
 *.pkl
 
+# Shiv files
+build/
+*pyz

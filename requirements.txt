@@ -6,3 +6,4 @@ spacy==3.8.5
 en_core_web_lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0-py3-none-any.whl
 label-studio==1.15.0
 label-studio-sdk==1.0.8
+shiv==1.0.8
