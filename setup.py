@@ -16,7 +16,7 @@ setuptools.setup(
     author_email="noreply@va.gov",
     maintainer="Nathan McCoy",
     maintainer_email="noreply@va.gov",
-    python_requires='>=3.10',
+    python_requires='>=3.10, <3.11',
     install_requires=read_requirements('requirements.txt'),
     packages=setuptools.find_packages(),
     include_package_data=True,
