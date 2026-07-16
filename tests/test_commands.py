@@ -150,3 +150,30 @@ def test_add_entities_to_csv(
     )
     assert os.path.isfile(temp_output_csv_path_string)
     assert total_entities_rows == len(mock_nlp('').ents)
+
+
+def test_flatten_entities_csv(
+        mock_input_csv,
+        tmp_path,
+        mock_nlp,
+        monkeypatch):
+    """Test adding entities with model"""
+    # Mock the trained model with fake repeatable outputs
+    monkeypatch.setattr(commands, 'load', lambda fn: mock_nlp)
+    temp_entities_csv_path = tmp_path / "temp.entities.csv"
+    temp_flattened_csv_path = tmp_path / "temp.flattened.entities.csv"
+    temp_entities_csv_path_string = str(temp_entities_csv_path)
+    temp_flattened_csv_path_string = str(temp_flattened_csv_path)
+    assert not os.path.isfile(temp_entities_csv_path_string)
+    total_entities_rows = commands.add_entities_to_csv(
+        input_filename=mock_input_csv,
+        text_column="ReportText",
+        model_filename="inexistent.model.file.pkl", 
+        output_filename=temp_entities_csv_path_string,
+    )
+    row_count = commands.flatten_entities_csv(
+        temp_entities_csv_path_string,
+        temp_flattened_csv_path_string
+    )
+    assert row_count
+    

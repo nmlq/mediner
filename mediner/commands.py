@@ -143,6 +143,38 @@ def add_entities_to_csv(
     return total
 
 
+def flatten_entities_csv(
+        input_filename: str,
+        output_filename: str) -> int:
+    """Flatten the output of the entities to CSV function.
+
+    The output CSV should be one entity per row, while maintaining any other columns.
+    Appends the output file by default.
+
+    :return int: row count
+    """
+    logger.info(f"Reading {input_filename}")
+    with open(input_filename, 'r') as inp_f:
+        reader = csv.reader(inp_f, delimiter=',', quoting=csv.QUOTE_ALL)
+        header = next(reader)
+
+        # get all the entities columns, i.e. anything ending with `_entities`
+        entities_columns_bools = [c.endswith('_entities') for c in header]
+
+        # with open(output_filename, 'a') as out_f:
+        #    writer = csv.writer(out_f, quoting=csv.QUOTE_ALL)
+
+        for column_data in tqdm.tqdm(reader):
+            # TODO: keep track of the ents
+            # We need to keep every datum and expand the entities here
+            # Keep record of them and append them to lists
+            # Check if the item is entity then keep the other previous item and repeat them
+            # also renate the associated column and add it as another column to know where the entity came from
+            # for datum, column, is_entity in zip(column_data, header, entities_columns_bools):
+            print(column_data)
+            break 
+
+
 
 def convert_csv_to_label_studio(
         input_filename: str,
