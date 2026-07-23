@@ -1,4 +1,5 @@
 import os
+import pandas
 from mediner import commands
 
 
@@ -161,19 +162,51 @@ def test_flatten_entities_csv(
     # Mock the trained model with fake repeatable outputs
     monkeypatch.setattr(commands, 'load', lambda fn: mock_nlp)
     temp_entities_csv_path = tmp_path / "temp.entities.csv"
-    temp_flattened_csv_path = tmp_path / "temp.flattened.entities.csv"
+    temp_entities_csv_path_2 = tmp_path / "temp.entities2.csv"
+
     temp_entities_csv_path_string = str(temp_entities_csv_path)
+    temp_entities_csv_path_string_2 = str(temp_entities_csv_path_2)
+
+    temp_flattened_csv_path = tmp_path / "temp.flattened.entities.csv"
     temp_flattened_csv_path_string = str(temp_flattened_csv_path)
+    
     assert not os.path.isfile(temp_entities_csv_path_string)
-    total_entities_rows = commands.add_entities_to_csv(
+    assert not os.path.isfile(temp_entities_csv_path_string_2)
+
+    # call it once on one column "ReportText"
+    commands.add_entities_to_csv(
         input_filename=mock_input_csv,
         text_column="ReportText",
         model_filename="inexistent.model.file.pkl", 
         output_filename=temp_entities_csv_path_string,
     )
+    # call it twice on second column "ImpressionText"
+    commands.add_entities_to_csv(
+        input_filename=mock_input_csv,
+        text_column="ImpressionText",
+        model_filename="inexistent.model.file.pkl", 
+        output_filename=temp_entities_csv_path_string_2,
+    )
     row_count = commands.flatten_entities_csv(
         temp_entities_csv_path_string,
         temp_flattened_csv_path_string
     )
-    assert row_count
+    assert row_count > 1
+    commands.flatten_entities_csv(
+        temp_entities_csv_path_string_2,
+        temp_flattened_csv_path_string
+    )
+    # load the csv and inspect the entities rows
+    flattened_df = pandas.read_csv(temp_flattened_csv_path_string)
+    for column_name in ['ENTITY_SOURCE', 'ENTITY_TYPE', 'ENTITY_NAME']:
+        assert column_name in flattened_df.columns
+    unique_sources = flattened_df['ENTITY_SOURCE'].unique()
+    assert 'ReportText' in unique_sources and 'ImpressionText' in unique_sources
+    ents_count = len(mock_nlp('').ents)
+    mock_input_csv_len = len(pandas.read_csv(mock_input_csv))
+    # the outputs flattened csv should be N_ENTS multiple of input csv
+    # we ran the flatten call twice, output should be twice as long as normal file times amount of entities
+    final_quantity_rows = ((mock_input_csv_len * 2) * ents_count)
+    print(flattened_df)
+    assert len(flattened_df) == final_quantity_rows
     

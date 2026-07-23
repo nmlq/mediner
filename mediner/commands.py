@@ -154,26 +154,54 @@ def flatten_entities_csv(
     :return int: row count
     """
     logger.info(f"Reading {input_filename}")
+    total_rows = 0
     with open(input_filename, 'r') as inp_f:
         reader = csv.reader(inp_f, delimiter=',', quoting=csv.QUOTE_ALL)
         header = next(reader)
+        
+        # get the entities keys, so we know which columns have entities
+        entities_keys = [key for key in header if key.endswith('_entities')]
 
-        # get all the entities columns, i.e. anything ending with `_entities`
-        entities_columns_bools = [c.endswith('_entities') for c in header]
+        # get all the header columns that arent entities, to make a new header
+        header_without_entities_columns = [key for key in header if not key.endswith('_entities')]
+        
+        # use the previous header columns without the entities
+        # expect to add two more items to the header later on; entity_source, entity_type, entity_name
+        new_header = header_without_entities_columns + ['ENTITY_SOURCE', 'ENTITY_TYPE', 'ENTITY_NAME']
 
-        # with open(output_filename, 'a') as out_f:
-        #    writer = csv.writer(out_f, quoting=csv.QUOTE_ALL)
+        with open(output_filename, 'a') as out_f:
+            writer = csv.writer(out_f, quoting=csv.QUOTE_ALL)
+            file_size = os.fstat(out_f.fileno()).st_size
+            if not file_size:
+                writer.writerow(new_header)
+            total_rows += 1
 
-        for column_data in tqdm.tqdm(reader):
-            # TODO: keep track of the ents
-            # We need to keep every datum and expand the entities here
-            # Keep record of them and append them to lists
-            # Check if the item is entity then keep the other previous item and repeat them
-            # also renate the associated column and add it as another column to know where the entity came from
-            # for datum, column, is_entity in zip(column_data, header, entities_columns_bools):
-            print(column_data)
-            break 
+            for column_data in tqdm.tqdm(reader):
+                column_dict = dict(zip(header, column_data))
+                
+                entities_dict = dict()
+                entities = []
 
+                # keep the column name key around to know the source
+                # pop out the entities and leave the rest, they will be repeated
+                for entity_key in entities_keys:
+                    entities_dict[entity_key] = column_dict.pop(entity_key)
+    
+                # source column and entities list
+                for entity_key, entities_json in entities_dict.items():
+                    entities = json.loads(entities_json)
+                    # the source was appended previously, remove it
+                    entity_source = entity_key.replace('_entities', '')
+
+                    for entity in entities:
+                        # lets always keep the same order defined by the new header, but add entities data
+                        # new column with entities; new header column names & 'ENTITY_SOURCE', 'ENTITY_TYPE', 'ENTITY_NAME'
+                        row = [column_dict[h] for h in header_without_entities_columns] + [entity_source, entity['label'], entity['text']]
+                        writer.writerow(row)
+                        total_rows += 1
+        return total_rows
+            
+            
 
 
 def convert_csv_to_label_studio(
