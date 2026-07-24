@@ -16,6 +16,10 @@ def get_parser() -> argparse.ArgumentParser:
         help="Add entities to CSV. Requires --text-column and --model-filename"
     )
     parser.add_argument(
+        '--flatten-entities-csv',
+        help="Flatten entities CSV to one entity per row."
+    )
+    parser.add_argument(
         '--convert-csv-to-label-studio',
         help="Convert CSV to importable label-studio format"
     )
@@ -37,6 +41,10 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         '--output-json',
         help="Output json for conversions"
+    )
+    parser.add_argument(
+        '--output-csv',
+        help="Output csv for flattening"
     )
     parser.add_argument(
         '--model-filename',
@@ -136,6 +144,11 @@ def main() -> None:
             percentage=args.hold_out_percentage,
             shuffle=args.shuffle,
             config_filename=args.cfg_filename
+        )
+    elif args.flatten_entities_csv:
+        commands.flatten_entities_csv(
+            args.flatten_entities_csv,
+            output_filename=args.output_csv
         )
     elif args.load:
         commands.load(args.load)
