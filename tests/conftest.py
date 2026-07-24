@@ -11,12 +11,14 @@ def mock_input_data() -> list[dict]:
         {
             "Sta3n": 123,
             "SiteAccessionNumber": "NULL",
-            "ReportText": "Some text"
+            "ReportText": "Some text",
+            "ImpressionText": "Some other text"
         },
         {
             "Sta3n": 456,
             "SiteAccessionNumber": "111-222222-3333",
-            "ReportText": "Some more text"
+            "ReportText": "Some more text",
+            "ImpressionText": "Some other text"
         }
     ]
 
