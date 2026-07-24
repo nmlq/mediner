@@ -5,6 +5,7 @@ import spacy
 import pickle
 import datetime
 import tqdm
+import time
 import csv
 import os
 import random
@@ -153,7 +154,14 @@ def flatten_entities_csv(
 
     :return int: row count
     """
-    logger.info(f"Reading {input_filename}")
+    logger.info("Flattening entities CSV.")
+    if not input_filename.endswith('.csv'):
+        raise Exception(f"Input file not a .csv; {input_filename}")
+
+    if not output_filename.endswith('.csv'):
+        raise Exception(f"Output file not a .csv; {output_filename}")
+
+    logger.info(f"Reading from {input_filename}, writing to {output_filename}")
     total_rows = 0
     with open(input_filename, 'r') as inp_f:
         reader = csv.reader(inp_f, delimiter=',', quoting=csv.QUOTE_ALL)
@@ -199,6 +207,7 @@ def flatten_entities_csv(
                         row = [column_dict[h] for h in header_without_entities_columns] + [entity_source, entity['label'], entity['text']]
                         writer.writerow(row)
                         total_rows += 1
+        logger.info(f"Wrote {total_rows} rows to file")
         return total_rows
             
             
