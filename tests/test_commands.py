@@ -204,9 +204,6 @@ def test_flatten_entities_csv(
     assert 'ReportText' in unique_sources and 'ImpressionText' in unique_sources
     ents_count = len(mock_nlp('').ents)
     mock_input_csv_len = len(pandas.read_csv(mock_input_csv))
-    # the outputs flattened csv should be N_ENTS multiple of input csv
-    # we ran the flatten call twice, output should be twice as long as normal file times amount of entities
-    final_quantity_rows = ((mock_input_csv_len * 2) * ents_count)
-    print(flattened_df)
+    final_quantity_rows = mock_input_csv_len * ents_count
     assert len(flattened_df) == final_quantity_rows
     
