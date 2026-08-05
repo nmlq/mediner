@@ -101,45 +101,31 @@ def add_entities_to_csv(
     logger.info(f"Reading '{input_filename}' and writing out to '{output_filename}'")
     # Load the model
     nlp = load(model_filename)
-
-    # Total tally for readability
+    # first row write the header only once, use a bool to keep track
+    first = True
+    # gather the total rows
     total = 0
-
-    # open the input file to read the data from one line at a time
-    with open(input_filename, 'r') as inp_f:
-        reader = csv.reader(inp_f, delimiter=',')
-        header = next(reader)
-        # check for the text column, if it isnt there fail
-        text_index = header.index(text_column)
-
-        # No failiures, Open up the file now for writing
-        with open(output_filename, 'w') as out_f:
-            writer = csv.writer(out_f, quoting=csv.QUOTE_ALL)
-
-            # Make a new header with the old one and an additional column for entities
-            new_header = header + [entities_column_name]
-            writer.writerow(new_header)
-            # For all the additional data lines
-            for column_data in tqdm.tqdm(reader):
-                text = column_data[text_index]
-                # make the doc to get the ents
-                doc = nlp(text)
-                # directly dump the entities to a json 
-                # readable format and add to the file
-                entities = [
-                    dict(
-                        start_char=ent.start_char,
-                        end_char=ent.end_char,
-                        text=ent.text,
-                        label=ent.label_
-                    )
-                    for ent in doc.ents
-                ]
-                entities_json = json.dumps(entities)
-                new_column_data = column_data + [entities_json]
-                writer.writerow(new_column_data)
-                if entities:
-                    total += 1
+    progress_bar = tqdm.tqdm()
+    for chunk_df in pandas.read_csv(input_filename, chunksize=1):
+        text = chunk_df[text_column]
+        doc = nlp(text)
+        # directly dump the entities to a json 
+        # readable format and add to the file
+        entities = [
+            dict(
+                start_char=ent.start_char,
+                end_char=ent.end_char,
+                text=ent.text,
+                label=ent.label_
+            )
+            for ent in doc.ents
+        ]
+        entities_json = json.dumps(entities)
+        chunk_df[entities_column_name] = entities_json
+        chunk_df.to_csv(output_filename, mode='a', header=first, index=False)
+        first = False
+        total += 1
+        progress_bar.update(1)
     logger.info(f"Wrote {total} lines with entitiy predictions for column '{text_column}'")
     return total
 
@@ -162,53 +148,30 @@ def flatten_entities_csv(
         raise Exception(f"Output file not a .csv; {output_filename}")
 
     logger.info(f"Reading from {input_filename}, writing to {output_filename}")
-    total_rows = 0
-    with open(input_filename, 'r') as inp_f:
-        reader = csv.reader(inp_f, delimiter=',', quoting=csv.QUOTE_ALL)
-        header = next(reader)
-        
-        # get the entities keys, so we know which columns have entities
-        entities_keys = [key for key in header if key.endswith('_entities')]
-
-        # get all the header columns that arent entities, to make a new header
-        header_without_entities_columns = [key for key in header if not key.endswith('_entities')]
-        
-        # use the previous header columns without the entities
-        # expect to add two more items to the header later on; entity_source, entity_type, entity_name
-        new_header = header_without_entities_columns + ['ENTITY_SOURCE', 'ENTITY_TYPE', 'ENTITY_NAME']
-
-        with open(output_filename, 'a') as out_f:
-            writer = csv.writer(out_f, quoting=csv.QUOTE_ALL)
-            file_size = os.fstat(out_f.fileno()).st_size
-            if not file_size:
-                writer.writerow(new_header)
-            total_rows += 1
-
-            for column_data in tqdm.tqdm(reader):
-                column_dict = dict(zip(header, column_data))
-                
-                entities_dict = dict()
-                entities = []
-
-                # keep the column name key around to know the source
-                # pop out the entities and leave the rest, they will be repeated
-                for entity_key in entities_keys:
-                    entities_dict[entity_key] = column_dict.pop(entity_key)
+    total = 0
+    # only write the first header line once, even if you run this multiple times
+    # it only matters if the file exists to determine whether to write the header
+    first = not os.path.isfile(output_filename)
+    progress_bar = tqdm.tqdm()
+    for chunk_df in pandas.read_csv(input_filename, chunksize=1):
+        entities_columns = [c for c in chunk_df.columns if c.endswith('_entities')]
+        for entities_column in entities_columns:
+            entities_json = chunk_df[entities_column].item()
+            entities = json.loads(entities_json)
+            source = entities_column.replace('_entities', '')
+            for entity in entities:
+                new_entity_chunk_df = chunk_df.copy()
+                new_entity_chunk_df['ENTITY_SOURCE'] = source
+                new_entity_chunk_df['ENTITY_TYPE'] = entity['label']
+                new_entity_chunk_df['ENTITY_NAME'] = entity['text']
+                new_entity_chunk_df = new_entity_chunk_df.drop(columns=[entities_column])
+                new_entity_chunk_df.to_csv(output_filename, mode='a', header=first, index=False)
+                first = False
+                total += 1
+                progress_bar.update(1)
     
-                # source column and entities list
-                for entity_key, entities_json in entities_dict.items():
-                    entities = json.loads(entities_json)
-                    # the source was appended previously, remove it
-                    entity_source = entity_key.replace('_entities', '')
-
-                    for entity in entities:
-                        # lets always keep the same order defined by the new header, but add entities data
-                        # new column with entities; new header column names & 'ENTITY_SOURCE', 'ENTITY_TYPE', 'ENTITY_NAME'
-                        row = [column_dict[h] for h in header_without_entities_columns] + [entity_source, entity['label'], entity['text']]
-                        writer.writerow(row)
-                        total_rows += 1
-        logger.info(f"Wrote {total_rows} rows to file")
-        return total_rows
+        logger.info(f"Wrote {total} flattened entities rows to file")
+        return total
             
             
 
