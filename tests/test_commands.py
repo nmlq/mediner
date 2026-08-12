@@ -134,27 +134,41 @@ def test_train_hold_out_percentage_30(
 
 def test_add_entities_to_csv(
         mock_input_csv,
+        mock_input_df,
         tmp_path,
-        mock_nlp,
-        monkeypatch):
+        mock_label_studio_export_json_filename,
+        test_config_filename):
     """Test adding entities with model"""
-    # Mock the trained model with fake repeatable outputs
-    monkeypatch.setattr(commands, 'load', lambda fn: mock_nlp)
     temp_output_csv_path = tmp_path / "temp.output.entities.csv"
     temp_output_csv_path_string = str(temp_output_csv_path)
     assert not os.path.isfile(temp_output_csv_path_string)
+
+    temp_output_model_path = tmp_path / "temp.output.model.pkl"
+    temp_output_path = str(tmp_path)
+    temp_output_filename = str(temp_output_model_path)
+    assert not os.path.isfile(temp_output_filename)
+    trained_model_output_filename = commands.train(
+        input_filenames=[mock_label_studio_export_json_filename],
+        output_filename=temp_output_filename,
+        output_path=temp_output_path,
+        config_filename=test_config_filename,
+        percentage=0.3,
+        shuffle=True
+    )
+
     total_entities_rows = commands.add_entities_to_csv(
         input_filename=mock_input_csv,
         text_column="ReportText",
-        model_filename="inexistent.model.file.pkl", 
+        model_filename=trained_model_output_filename, 
         output_filename=temp_output_csv_path_string,
     )
     assert os.path.isfile(temp_output_csv_path_string)
-    assert total_entities_rows == len(mock_nlp('').ents)
+    assert total_entities_rows == len(mock_input_df)
 
 
 def test_flatten_entities_csv(
         mock_input_csv,
+        mock_input_df,
         tmp_path,
         mock_nlp,
         monkeypatch):
@@ -192,7 +206,7 @@ def test_flatten_entities_csv(
         temp_flattened_csv_path_string
     )
     assert row_count > 1
-    commands.flatten_entities_csv(
+    row_count += commands.flatten_entities_csv(
         temp_entities_csv_path_string_2,
         temp_flattened_csv_path_string
     )
@@ -202,8 +216,7 @@ def test_flatten_entities_csv(
         assert column_name in flattened_df.columns
     unique_sources = flattened_df['ENTITY_SOURCE'].unique()
     assert 'ReportText' in unique_sources and 'ImpressionText' in unique_sources
-    ents_count = len(mock_nlp('').ents)
-    mock_input_csv_len = len(pandas.read_csv(mock_input_csv))
-    final_quantity_rows = mock_input_csv_len * ents_count
-    assert len(flattened_df) == final_quantity_rows
+    amount_of_text_inputs = len(mock_input_df['ReportText'].dropna()) + len(mock_input_df['ImpressionText'].dropna())
+    amount_of_entities = len(mock_nlp('').ents)
+    assert len(flattened_df) == ((amount_of_text_inputs * amount_of_entities))
     

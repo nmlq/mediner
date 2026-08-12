@@ -107,7 +107,7 @@ def add_entities_to_csv(
     total = 0
     progress_bar = tqdm.tqdm()
     for chunk_df in pandas.read_csv(input_filename, chunksize=1):
-        text = chunk_df[text_column]
+        text = chunk_df[text_column].fillna("").item()
         doc = nlp(text)
         # directly dump the entities to a json 
         # readable format and add to the file
@@ -156,7 +156,7 @@ def flatten_entities_csv(
     for chunk_df in pandas.read_csv(input_filename, chunksize=1):
         entities_columns = [c for c in chunk_df.columns if c.endswith('_entities')]
         for entities_column in entities_columns:
-            entities_json = chunk_df[entities_column].item()
+            entities_json = chunk_df[entities_column].fillna("").item()
             entities = json.loads(entities_json)
             source = entities_column.replace('_entities', '')
             for entity in entities:
@@ -170,8 +170,8 @@ def flatten_entities_csv(
                 total += 1
                 progress_bar.update(1)
     
-        logger.info(f"Wrote {total} flattened entities rows to file")
-        return total
+    logger.info(f"Wrote {total} flattened entities rows to file")
+    return total
             
             
 

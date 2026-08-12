@@ -3,6 +3,7 @@ import pandas
 import os
 import json
 import spacy
+import csv
 
 
 @pytest.fixture(scope="session")
@@ -17,8 +18,20 @@ def mock_input_data() -> list[dict]:
         {
             "Sta3n": 456,
             "SiteAccessionNumber": "111-222222-3333",
-            "ReportText": "Some more text",
-            "ImpressionText": "Some other text"
+            "ReportText": "\r\nSome more text\nmultiline",
+            "ImpressionText": "\r\nSome other text"
+        },
+        {
+            "Sta3n": 789,
+            "SiteAccessionNumber": "111-222222-3333444",
+            "ReportText": "Hello or no.\r\n",
+            "ImpressionText": ""
+        },
+        {
+            "Sta3n": 1001,
+            "SiteAccessionNumber": "111-222222-5555",
+            "ReportText": "last",
+            "ImpressionText": ""
         }
     ]
 
@@ -33,7 +46,7 @@ def mock_input_csv(mock_input_df, tmp_path_factory):
     mock_input_csv_path = tmp_path_factory.mktemp(
         "mock-data-mediner"
     ) / "mock-input.csv"
-    mock_input_df.to_csv(mock_input_csv_path, index=False)
+    mock_input_df.to_csv(mock_input_csv_path, index=False, quoting=csv.QUOTE_ALL)
     return str(mock_input_csv_path)
 
 
