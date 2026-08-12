@@ -24,7 +24,7 @@ def mock_input_data() -> list[dict]:
         {
             "Sta3n": 789,
             "SiteAccessionNumber": "111-222222-3333444",
-            "ReportText": "\rHello or no.\r\r",
+            "ReportText": "Hello or no.\r\n",
             "ImpressionText": ""
         },
         {

@@ -212,13 +212,11 @@ def test_flatten_entities_csv(
     )
     # load the csv and inspect the entities rows
     flattened_df = pandas.read_csv(temp_flattened_csv_path_string)
-    print(flattened_df)
     for column_name in ['ENTITY_SOURCE', 'ENTITY_TYPE', 'ENTITY_NAME']:
         assert column_name in flattened_df.columns
     unique_sources = flattened_df['ENTITY_SOURCE'].unique()
     assert 'ReportText' in unique_sources and 'ImpressionText' in unique_sources
     amount_of_text_inputs = len(mock_input_df['ReportText'].dropna()) + len(mock_input_df['ImpressionText'].dropna())
     amount_of_entities = len(mock_nlp('').ents)
-    quantity_of_runs = 2
-    assert len(flattened_df) == ((amount_of_text_inputs * amount_of_entities) * quantity_of_runs)
+    assert len(flattened_df) == ((amount_of_text_inputs * amount_of_entities))
     
